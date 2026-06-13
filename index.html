@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Mukesh 180">
+<title>Operation Mukesh 180</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #090909;
+  --s1: #111113;
+  --s2: #18181c;
+  --s3: #222228;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #f5f5f7;
+  --muted: #888;
+  --hint: #444;
+  --accent: #FF6B35;
+  --accent-dim: rgba(255,107,53,0.12);
+  --green: #10B981;
+  --green-dim: rgba(16,185,129,0.12);
+  --indigo: #818CF8;
+  --indigo-dim: rgba(129,140,248,0.12);
+  --amber: #F59E0B;
+  --amber-dim: rgba(245,158,11,0.12);
+  --pink: #F472B6;
+  --pink-dim: rgba(244,114,182,0.12);
+  --teal: #2DD4BF;
+  --r: 16px;
+  --rsm: 10px;
+  --tab-h: 72px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--bg); }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', -apple-system, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── SETUP SCREEN ── */
+#setup-screen {
+  position: fixed; inset: 0; background: var(--bg); z-index: 1000;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 32px 24px; text-align: center;
+}
+.setup-logo { font-size: 48px; margin-bottom: 20px; }
+.setup-title { font-size: 28px; font-weight: 700; color: var(--text); letter-spacing: -1px; margin-bottom: 8px; }
+.setup-sub { font-size: 15px; color: var(--muted); line-height: 1.6; margin-bottom: 40px; }
+.setup-steps { width: 100%; max-width: 380px; text-align: left; margin-bottom: 32px; }
+.setup-step { display: flex; gap: 14px; align-items: flex-start; padding: 14px 0; border-bottom: 0.5px solid var(--border); }
+.setup-step:last-child { border-bottom: none; }
+.setup-num { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.setup-step-text { font-size: 14px; color: var(--text); line-height: 1.5; }
+.setup-step-text span { color: var(--muted); font-size: 13px; display: block; margin-top: 2px; }
+.setup-input-wrap { width: 100%; max-width: 380px; margin-bottom: 16px; }
+.setup-input {
+  width: 100%; background: var(--s2); border: 1px solid var(--border2);
+  border-radius: var(--r); padding: 14px 16px; font-size: 14px;
+  color: var(--text); font-family: inherit; outline: none;
+  transition: border-color 0.2s;
+}
+.setup-input:focus { border-color: var(--accent); }
+.setup-input::placeholder { color: var(--hint); }
+.btn-primary {
+  width: 100%; max-width: 380px; padding: 16px; border-radius: var(--r);
+  background: var(--accent); border: none; color: #fff; font-size: 16px;
+  font-weight: 700; font-family: inherit; cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  letter-spacing: -0.2px;
+}
+.btn-primary:active { opacity: 0.85; transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.4; }
+.setup-error { color: #ef4444; font-size: 13px; margin-top: 10px; display: none; }
+.setup-loading { color: var(--muted); font-size: 14px; margin-top: 10px; display: none; }
+
+/* ── MAIN APP ── */
+#app { display: none; padding-bottom: var(--tab-h); }
+
+/* ── TOP BAR ── */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(9,9,9,0.9);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-bottom: 0.5px solid var(--border);
+  padding: env(safe-area-inset-top, 44px) 20px 0;
+}
+.topbar-inner { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; }
+.topbar-title { font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
+.topbar-date { font-size: 12px; color: var(--muted); margin-top: 1px; }
+.topbar-sync { width: 34px; height: 34px; border-radius: 50%; background: var(--s2); border: 0.5px solid var(--border2); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; transition: transform 0.3s; }
+.topbar-sync.syncing { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── BOTTOM TAB BAR ── */
+.tabbar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+  background: rgba(9,9,9,0.95);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  border-top: 0.5px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  height: var(--tab-h);
+  display: flex; align-items: flex-start; padding-top: 8px;
+}
+.tab-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  gap: 4px; cursor: pointer; padding: 4px 0; border: none;
+  background: transparent; color: var(--hint); transition: color 0.15s;
+  font-family: inherit;
+}
+.tab-btn.active { color: var(--accent); }
+.tab-icon { font-size: 22px; }
+.tab-label { font-size: 10px; font-weight: 600; letter-spacing: 0.3px; }
+
+/* ── PAGES ── */
+.page { display: none; padding: 16px 16px 24px; max-width: 480px; margin: 0 auto; }
+.page.active { display: block; }
+
+/* ── DAILY HERO ── */
+.hero-card {
+  background: var(--s1);
+  border: 0.5px solid var(--border2);
+  border-radius: 24px;
+  padding: 20px;
+  margin-bottom: 16px;
+  display: flex; gap: 18px; align-items: center;
+  position: relative; overflow: hidden;
+}
+.hero-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--amber));
+  border-radius: 24px 24px 0 0;
+}
+.arc-wrap { position: relative; width: 80px; height: 80px; flex-shrink: 0; }
+.arc-wrap svg { transform: rotate(-90deg); }
+.arc-bg { fill: none; stroke: var(--s3); stroke-width: 6; }
+.arc-fill { fill: none; stroke: url(#arcGrad); stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 0.6s cubic-bezier(0.34,1.56,0.64,1); }
+.arc-text {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.arc-pct { font-size: 20px; font-weight: 700; color: var(--text); line-height: 1; }
+.arc-done { font-size: 9px; color: var(--muted); margin-top: 2px; }
+.hero-info { flex: 1; }
+.hero-day { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
+.hero-tasks { font-size: 13px; color: var(--muted); margin-top: 3px; }
+.hero-workout { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; background: var(--accent-dim); border-radius: 999px; padding: 5px 12px; font-size: 12px; font-weight: 600; color: var(--accent); }
+.day-complete { display: none; font-size: 13px; font-weight: 600; color: var(--green); margin-top: 8px; }
+
+/* ── DAY NUMBER PILL ── */
+.day-pill {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--s2); border: 0.5px solid var(--border);
+  border-radius: 999px; padding: 6px 14px;
+  margin-bottom: 14px; width: fit-content;
+}
+.day-pill-num { font-size: 13px; font-weight: 700; color: var(--accent); }
+.day-pill-sep { width: 1px; height: 12px; background: var(--border2); }
+.day-pill-left { font-size: 12px; color: var(--muted); }
+
+/* ── TOP 3 ── */
+.top3-card {
+  background: var(--s1); border: 0.5px solid var(--border);
+  border-radius: var(--r); padding: 16px; margin-bottom: 14px;
+}
+.top3-label { font-size: 11px; font-weight: 600; color: var(--accent); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 12px; }
+.top3-input {
+  display: flex; align-items: center; gap: 10px; padding: 10px 0;
+  border-bottom: 0.5px solid var(--border);
+}
+.top3-input:last-child { border-bottom: none; padding-bottom: 0; }
+.top3-num { font-size: 12px; font-weight: 700; color: var(--accent); width: 16px; flex-shrink: 0; }
+.top3-field {
+  flex: 1; background: transparent; border: none; outline: none;
+  font-size: 14px; color: var(--text); font-family: inherit;
+}
+.top3-field::placeholder { color: var(--hint); }
+
+/* ── BLOCKS ── */
+.block {
+  background: var(--s1); border: 0.5px solid var(--border);
+  border-radius: var(--r); margin-bottom: 10px;
+  overflow: hidden; transition: border-color 0.2s;
+}
+.block.complete { border-color: rgba(16,185,129,0.3); }
+.block-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 13px 14px; cursor: pointer;
+  user-select: none; -webkit-user-select: none;
+}
+.block-strip { width: 3px; height: 32px; border-radius: 2px; flex-shrink: 0; }
+.block-info { flex: 1; min-width: 0; }
+.block-time { font-size: 11px; color: var(--muted); font-weight: 500; }
+.block-name { font-size: 14px; font-weight: 600; color: var(--text); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.block-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.block-badge { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 999px; }
+.block-chevron { font-size: 12px; color: var(--hint); transition: transform 0.2s; }
+.block-chevron.open { transform: rotate(90deg); }
+.block-body { border-top: 0.5px solid var(--border); }
+.block-body.collapsed { display: none; }
+
+/* ── TASKS ── */
+.task {
+  display: flex; align-items: center; gap: 13px;
+  padding: 13px 14px; border-bottom: 0.5px solid var(--border);
+  cursor: pointer; transition: background 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.task:last-of-type { border-bottom: none; }
+.task:active { background: var(--s2); }
+.task-cb {
+  width: 22px; height: 22px; border-radius: 7px;
+  border: 1.5px solid var(--hint); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+.task-cb.on { background: var(--green); border-color: var(--green); transform: scale(1.05); }
+.task-cb.on::after { content: '✓'; color: #fff; font-size: 13px; font-weight: 700; }
+.task-label { font-size: 14px; color: var(--text); line-height: 1.4; flex: 1; transition: color 0.2s; }
+.task-label.done { color: var(--hint); text-decoration: line-through; }
+
+/* ── BLOCK INPUTS ── */
+.block-input-section { padding: 12px 14px; }
+.bi-label { font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 7px; }
+.bi-field {
+  width: 100%; background: var(--s2); border: 0.5px solid var(--border);
+  border-radius: var(--rsm); padding: 10px 12px; font-size: 14px;
+  color: var(--text); font-family: inherit; outline: none;
+  transition: border-color 0.2s;
+}
+.bi-field:focus { border-color: var(--accent); }
+.bi-field::placeholder { color: var(--hint); }
+textarea.bi-field { resize: none; line-height: 1.5; }
+
+/* ── MONTHLY ── */
+.cal-nav-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.cal-month-title { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -0.5px; }
+.cal-btns { display: flex; gap: 8px; }
+.cal-btn {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--s2); border: 0.5px solid var(--border);
+  color: var(--text); font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: inherit; transition: background 0.15s;
+}
+.cal-btn:active { background: var(--s3); }
+.day-labels { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; margin-bottom: 4px; }
+.dl { text-align: center; font-size: 11px; color: var(--hint); font-weight: 600; padding: 4px 0; }
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
+.cal-cell {
+  aspect-ratio: 1; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 500; color: var(--muted);
+  background: var(--s1); border: 0.5px solid var(--border);
+  cursor: pointer; transition: all 0.15s; position: relative;
+}
+.cal-cell.empty { background: transparent; border-color: transparent; cursor: default; }
+.cal-cell.future { opacity: 0.25; cursor: default; }
+.cal-cell.today { border-color: var(--accent); color: var(--accent); }
+.cal-cell.full { background: var(--green); border-color: var(--green); color: #fff; }
+.cal-cell.partial { background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.4); color: var(--green); }
+.cal-legend { display: flex; gap: 16px; margin-top: 14px; flex-wrap: wrap; }
+.leg { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); }
+.leg-sq { width: 12px; height: 12px; border-radius: 3px; }
+
+.month-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 20px 0 16px; }
+.mstat { background: var(--s1); border: 0.5px solid var(--border); border-radius: var(--r); padding: 14px 10px; text-align: center; }
+.mstat-val { font-size: 22px; font-weight: 700; color: var(--text); }
+.mstat-label { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+.habits-title { font-size: 16px; font-weight: 700; color: var(--text); margin: 20px 0 12px; letter-spacing: -0.3px; }
+.habit-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 0.5px solid var(--border); }
+.habit-row:last-child { border-bottom: none; }
+.habit-name { font-size: 12px; color: var(--text); width: 110px; flex-shrink: 0; font-weight: 500; }
+.habit-dots { display: flex; gap: 2.5px; flex: 1; overflow: hidden; }
+.h-dot { width: 8px; height: 8px; border-radius: 2px; background: var(--s2); flex-shrink: 0; transition: background 0.15s; }
+.h-dot.on { background: var(--green); }
+.h-dot.today-dot { background: var(--accent); }
+.habit-pct { font-size: 11px; color: var(--muted); min-width: 32px; text-align: right; font-weight: 600; }
+
+/* ── TARGETS ── */
+.metrics-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.metric-card { background: var(--s1); border: 0.5px solid var(--border); border-radius: var(--r); padding: 16px; }
+.metric-label { font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 6px; letter-spacing: 0.3px; }
+.metric-big { font-size: 32px; font-weight: 700; color: var(--text); letter-spacing: -1.5px; line-height: 1; }
+.metric-sub { font-size: 11px; color: var(--hint); margin-top: 5px; }
+.streak-row { display: flex; gap: 4px; margin-bottom: 20px; }
+.s-sq { flex: 1; height: 5px; border-radius: 2px; background: var(--s2); }
+.s-sq.done { background: var(--green); }
+.s-sq.today-sq { background: var(--accent); }
+.s-label { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+
+.tcard { background: var(--s1); border: 0.5px solid var(--border); border-radius: var(--r); padding: 16px; margin-bottom: 10px; }
+.tcard-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 4px; }
+.tcard-name { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+.tcard-pct { font-size: 15px; font-weight: 700; }
+.tcard-desc { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+.tbar-bg { height: 6px; background: var(--s3); border-radius: 999px; overflow: hidden; margin-bottom: 12px; }
+.tbar-fill { height: 100%; border-radius: 999px; transition: width 0.5s cubic-bezier(0.34,1.2,0.64,1); }
+.tinput-row { display: flex; align-items: center; gap: 10px; }
+.tinput-label { font-size: 12px; color: var(--muted); flex-shrink: 0; }
+.tinput {
+  flex: 1; background: var(--s2); border: 0.5px solid var(--border);
+  border-radius: var(--rsm); padding: 9px 12px; font-size: 14px;
+  color: var(--text); font-family: inherit; outline: none; max-width: 140px;
+  transition: border-color 0.2s;
+}
+.tinput:focus { border-color: var(--accent); }
+
+/* ── JOURNAL ── */
+.jcard { background: var(--s1); border: 0.5px solid var(--border); border-radius: var(--r); margin-bottom: 10px; overflow: hidden; }
+.jcard-head { padding: 12px 14px; border-bottom: 0.5px solid var(--border); }
+.jcard-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.jcard-body { padding: 12px 14px; }
+.jlabel { font-size: 11px; color: var(--muted); margin-bottom: 7px; }
+.jfield {
+  width: 100%; background: var(--s2); border: 0.5px solid var(--border);
+  border-radius: var(--rsm); padding: 11px 13px; font-size: 14px;
+  color: var(--text); font-family: inherit; outline: none; transition: border-color 0.2s;
+}
+.jfield:focus { border-color: var(--accent); }
+.jfield::placeholder { color: var(--hint); }
+textarea.jfield { resize: none; line-height: 1.5; }
+
+.save-btn {
+  width: 100%; padding: 15px; border-radius: var(--r);
+  background: linear-gradient(135deg, var(--accent), var(--amber));
+  border: none; color: #fff; font-size: 15px; font-weight: 700;
+  font-family: inherit; cursor: pointer; margin-bottom: 8px;
+  transition: opacity 0.15s, transform 0.1s; letter-spacing: -0.2px;
+}
+.save-btn:active { opacity: 0.85; transform: scale(0.98); }
+.save-msg { text-align: center; font-size: 13px; color: var(--green); display: none; margin-bottom: 16px; font-weight: 500; }
+
+.past-entry { background: var(--s1); border: 0.5px solid var(--border); border-radius: var(--r); padding: 14px; margin-bottom: 8px; }
+.pe-date { font-size: 12px; color: var(--muted); font-weight: 600; margin-bottom: 8px; }
+.pe-wins { font-size: 13px; color: var(--text); line-height: 1.6; white-space: pre-wrap; }
+
+/* ── SYNC STATUS ── */
+.sync-status {
+  display: flex; align-items: center; gap: 6px; font-size: 11px;
+  padding: 6px 12px; border-radius: 999px; width: fit-content;
+  margin: 0 auto 16px;
+}
+.sync-dot { width: 6px; height: 6px; border-radius: 50%; }
+.sync-status.ok { background: var(--green-dim); color: var(--green); }
+.sync-status.ok .sync-dot { background: var(--green); }
+.sync-status.err { background: var(--accent-dim); color: var(--accent); }
+.sync-status.err .sync-dot { background: var(--accent); }
+.sync-status.syncing-s { background: var(--indigo-dim); color: var(--indigo); }
+.sync-status.syncing-s .sync-dot { background: var(--indigo); animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+/* ── SECTION TITLE ── */
+.sec-title { font-size: 13px; font-weight: 700; color: var(--muted); letter-spacing: 0.8px; text-transform: uppercase; margin: 20px 0 10px; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: calc(var(--tab-h) + 16px); left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--s3); border: 0.5px solid var(--border2);
+  border-radius: 999px; padding: 10px 20px; font-size: 13px; font-weight: 500;
+  color: var(--text); z-index: 999; opacity: 0; transition: all 0.3s;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── SECTION HEADER (settings) ── */
+.settings-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 0.5px solid var(--border); }
+.settings-label { font-size: 14px; color: var(--text); }
+.settings-val { font-size: 13px; color: var(--muted); }
+.settings-btn {
+  padding: 8px 16px; border-radius: 999px; background: var(--s2);
+  border: 0.5px solid var(--border2); color: var(--text); font-size: 13px;
+  font-family: inherit; cursor: pointer; font-weight: 500;
+}
+.settings-btn.danger { color: var(--accent); border-color: rgba(255,107,53,0.3); }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF6B35"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- ══════════ SETUP SCREEN ══════════ -->
+<div id="setup-screen">
+  <div class="setup-logo">⚡</div>
+  <div class="setup-title">Operation Mukesh 180</div>
+  <div class="setup-sub">Your personal mission tracker.<br>Let's connect it to Google Sheets so your data is always safe.</div>
+
+  <div class="setup-steps">
+    <div class="setup-step">
+      <div class="setup-num">1</div>
+      <div class="setup-step-text">
+        Go to <strong>script.google.com</strong>
+        <span>Sign in with your Gmail → tap "New project"</span>
+      </div>
+    </div>
+    <div class="setup-step">
+      <div class="setup-num">2</div>
+      <div class="setup-step-text">
+        Paste the backend code
+        <span>Delete existing code → paste the Code.gs file contents → Save (Ctrl+S)</span>
+      </div>
+    </div>
+    <div class="setup-step">
+      <div class="setup-num">3</div>
+      <div class="setup-step-text">
+        Deploy as Web App
+        <span>Deploy → New deployment → Web App → Execute as: Me → Who has access: Anyone → Deploy → Copy the URL</span>
+      </div>
+    </div>
+    <div class="setup-step">
+      <div class="setup-num">4</div>
+      <div class="setup-step-text">
+        Paste your Web App URL below
+        <span>That's it — your sheet will be created automatically!</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="setup-input-wrap">
+    <input class="setup-input" id="script-url" type="url"
+      placeholder="https://script.google.com/macros/s/.../exec"
+      autocomplete="off" autocorrect="off" spellcheck="false"/>
+  </div>
+  <button class="btn-primary" id="connect-btn" onclick="connectSheet()">Connect & Start</button>
+  <div class="setup-error" id="setup-error"></div>
+  <div class="setup-loading" id="setup-loading">⏳ Connecting to Google Sheets...</div>
+
+  <div style="margin-top:24px;font-size:12px;color:var(--hint);max-width:340px;line-height:1.6">
+    Your data goes only to your own Google account. Nobody else can access it.
+  </div>
+</div>
+
+<!-- ══════════ MAIN APP ══════════ -->
+<div id="app">
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <div class="topbar-title">⚡ Mukesh 180</div>
+        <div class="topbar-date" id="topbar-date"></div>
+      </div>
+      <div class="topbar-sync" id="sync-btn" onclick="syncAll()" title="Sync">↻</div>
+    </div>
+  </div>
+
+  <!-- ── DAILY PAGE ── -->
+  <div class="page active" id="page-daily">
+
+    <div style="margin-top:14px">
+      <div class="sync-status ok" id="sync-status-daily">
+        <div class="sync-dot"></div>
+        <span id="sync-text-daily">Synced</span>
+      </div>
+
+      <div class="hero-card">
+        <div class="arc-wrap">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle class="arc-bg" cx="40" cy="40" r="32"/>
+            <circle class="arc-fill" id="arc-fill" cx="40" cy="40" r="32"
+              stroke-dasharray="201.1" stroke-dashoffset="201.1"/>
+          </svg>
+          <div class="arc-text">
+            <div class="arc-pct" id="arc-pct">0%</div>
+            <div class="arc-done" id="arc-done-lbl">done</div>
+          </div>
+        </div>
+        <div class="hero-info">
+          <div class="hero-day" id="hero-day"></div>
+          <div class="hero-tasks" id="hero-tasks">0 of 0 tasks</div>
+          <div class="hero-workout" id="hero-workout">🏋️ Loading...</div>
+          <div class="day-complete" id="day-complete">✦ Day Complete!</div>
+        </div>
+      </div>
+
+      <div class="day-pill">
+        <div class="day-pill-num" id="pill-day">Day 1</div>
+        <div class="day-pill-sep"></div>
+        <div class="day-pill-left" id="pill-left">179 days to go</div>
+      </div>
+
+      <!-- Top 3 -->
+      <div class="top3-card">
+        <div class="top3-label">Today's Top 3</div>
+        <div class="top3-input">
+          <div class="top3-num">1</div>
+          <input class="top3-field" id="top1" placeholder="Most important task..."/>
+        </div>
+        <div class="top3-input">
+          <div class="top3-num">2</div>
+          <input class="top3-field" id="top2" placeholder="Second priority..."/>
+        </div>
+        <div class="top3-input">
+          <div class="top3-num">3</div>
+          <input class="top3-field" id="top3" placeholder="Third priority..."/>
+        </div>
+      </div>
+
+      <!-- 5:30 AM -->
+      <div class="block" id="blk-dharma1">
+        <div class="block-head" onclick="toggleBlock('dharma1')">
+          <div class="block-strip" style="background:var(--indigo)"></div>
+          <div class="block-info">
+            <div class="block-time">5:30 – 6:00 AM</div>
+            <div class="block-name">Morning Dharma</div>
+          </div>
+          <div class="block-right">
+            <div class="block-badge" style="background:var(--indigo-dim);color:var(--indigo)" id="bp-dharma1">0/4</div>
+            <div class="block-chevron open" id="chv-dharma1">›</div>
+          </div>
+        </div>
+        <div class="block-body" id="bb-dharma1">
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">Wake up at 5:30 AM</div></div>
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">No Instagram / Facebook / messages</div></div>
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">Water + Bath</div></div>
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">108 Ram Naam or Hanuman Chalisa</div></div>
+        </div>
+      </div>
+
+      <!-- Workout -->
+      <div class="block" id="blk-workout">
+        <div class="block-head" onclick="toggleBlock('workout')">
+          <div class="block-strip" style="background:var(--green)"></div>
+          <div class="block-info">
+            <div class="block-time">6:00 – 7:00 AM</div>
+            <div class="block-name">Workout</div>
+          </div>
+          <div class="block-right">
+            <div class="block-badge" style="background:var(--green-dim);color:var(--green)" id="bp-workout">0/4</div>
+            <div class="block-chevron open" id="chv-workout">›</div>
+          </div>
+        </div>
+        <div class="block-body" id="bb-workout"></div>
+      </div>
+
+      <!-- Money Block -->
+      <div class="block" id="blk-money">
+        <div class="block-head" onclick="toggleBlock('money')">
+          <div class="block-strip" style="background:var(--amber)"></div>
+          <div class="block-info">
+            <div class="block-time">8:00 AM – 12:00 PM</div>
+            <div class="block-name">Money Block — StaticNerd</div>
+          </div>
+          <div class="block-right">
+            <div class="block-badge" style="background:var(--amber-dim);color:var(--amber)" id="bp-money">0/4</div>
+            <div class="block-chevron open" id="chv-money">›</div>
+          </div>
+        </div>
+        <div class="block-body" id="bb-money">
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">20 WhatsApp messages sent</div></div>
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">20 Emails sent</div></div>
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">20 Calls made</div></div>
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">No scrolling / no motivation videos</div></div>
+        </div>
+      </div>
+
+      <!-- Lunch -->
+      <div class="block" id="blk-lunch">
+        <div class="block-head" onclick="toggleBlock('lunch')">
+          <div class="block-strip" style="background:var(--indigo)"></div>
+          <div class="block-info">
+            <div class="block-time">12:00 – 1:00 PM</div>
+            <div class="block-name">Lunch + Ram Naam</div>
+          </div>
+          <div class="block-right">
+            <div class="block-badge" style="background:var(--indigo-dim);color:var(--indigo)" id="bp-lunch">0/2</div>
+            <div class="block-chevron open" id="chv-lunch">›</div>
+          </div>
+        </div>
+        <div class="block-body" id="bb-lunch">
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">Lunch done</div></div>
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">10 min Ram Naam + Rest</div></div>
+        </div>
+      </div>
+
+      <!-- SmartPlatter -->
+      <div class="block" id="blk-sp">
+        <div class="block-head" onclick="toggleBlock('sp')">
+          <div class="block-strip" style="background:var(--accent)"></div>
+          <div class="block-info">
+            <div class="block-time">1:00 – 4:00 PM</div>
+            <div class="block-name">SmartPlatter</div>
+          </div>
+          <div class="block-right">
+            <div class="block-badge" style="background:var(--accent-dim);color:var(--accent)" id="bp-sp">0/3</div>
+            <div class="block-chevron open" id="chv-sp">›</div>
+          </div>
+        </div>
+        <div class="block-body" id="bb-sp">
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">Product improvement done</div></div>
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">Demo preparation done</div></div>
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">Customer / restaurant outreach done</div></div>
+        </div>
+      </div>
+
+      <!-- Walk -->
+      <div class="block" id="blk-walk">
+        <div class="block-head" onclick="toggleBlock('walk')">
+          <div class="block-strip" style="background:var(--teal)"></div>
+          <div class="block-info">
+            <div class="block-time">4:00 – 5:00 PM</div>
+            <div class="block-name">Walk — No Phone</div>
+          </div>
+          <div class="block-right">
+            <div class="block-badge" style="background:rgba(45,212,191,0.12);color:var(--teal)" id="bp-walk">0/1</div>
+            <div class="block-chevron open" id="chv-walk">›</div>
+          </div>
+        </div>
+        <div class="block-body" id="bb-walk">
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">1 hour walk done (sunlight, no phone)</div></div>
+        </div>
+      </div>
+
+      <!-- BharatSec -->
+      <div class="block" id="blk-bs">
+        <div class="block-head" onclick="toggleBlock('bs')">
+          <div class="block-strip" style="background:var(--indigo)"></div>
+          <div class="block-info">
+            <div class="block-time">5:00 – 7:00 PM</div>
+            <div class="block-name">BharatSec</div>
+          </div>
+          <div class="block-right">
+            <div class="block-badge" style="background:var(--indigo-dim);color:var(--indigo)" id="bp-bs">0/2</div>
+            <div class="block-chevron open" id="chv-bs">›</div>
+          </div>
+        </div>
+        <div class="block-body" id="bb-bs">
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">Course / awareness content created</div></div>
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">Pentesting / training work done</div></div>
+        </div>
+      </div>
+
+      <!-- Family -->
+      <div class="block" id="blk-fam">
+        <div class="block-head" onclick="toggleBlock('fam')">
+          <div class="block-strip" style="background:var(--pink)"></div>
+          <div class="block-info">
+            <div class="block-time">7:00 – 8:00 PM</div>
+            <div class="block-name">Family Time</div>
+          </div>
+          <div class="block-right">
+            <div class="block-badge" style="background:var(--pink-dim);color:var(--pink)" id="bp-fam">0/1</div>
+            <div class="block-chevron open" id="chv-fam">›</div>
+          </div>
+        </div>
+        <div class="block-body" id="bb-fam">
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">Talked to parents / helped at home</div></div>
+        </div>
+      </div>
+
+      <!-- Learning -->
+      <div class="block" id="blk-learn">
+        <div class="block-head" onclick="toggleBlock('learn')">
+          <div class="block-strip" style="background:var(--accent)"></div>
+          <div class="block-info">
+            <div class="block-time">8:00 – 9:00 PM</div>
+            <div class="block-name">Learning Block</div>
+          </div>
+          <div class="block-right">
+            <div class="block-badge" style="background:var(--accent-dim);color:var(--accent)" id="bp-learn">0/1</div>
+            <div class="block-chevron open" id="chv-learn">›</div>
+          </div>
+        </div>
+        <div class="block-body" id="bb-learn">
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">1 hour focused learning done</div></div>
+          <div class="block-input-section" style="border-top:0.5px solid var(--border)">
+            <div class="bi-label">Topic (Sales / SaaS / Pentesting / Business)</div>
+            <input class="bi-field" id="learn-topic" placeholder="e.g. SaaS growth strategies"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Night Dharma -->
+      <div class="block" id="blk-night">
+        <div class="block-head" onclick="toggleBlock('night')">
+          <div class="block-strip" style="background:var(--indigo)"></div>
+          <div class="block-info">
+            <div class="block-time">9:00 – 9:30 PM</div>
+            <div class="block-name">Ram Naam + Journal</div>
+          </div>
+          <div class="block-right">
+            <div class="block-badge" style="background:var(--indigo-dim);color:var(--indigo)" id="bp-night">0/2</div>
+            <div class="block-chevron open" id="chv-night">›</div>
+          </div>
+        </div>
+        <div class="block-body" id="bb-night">
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">Ram Naam done</div></div>
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">Journal: 3 wins written</div></div>
+          <div class="block-input-section" style="border-top:0.5px solid var(--border)">
+            <div class="bi-label">Wins today (even small ones)</div>
+            <textarea class="bi-field" id="wins-today" rows="3" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sleep -->
+      <div class="block" id="blk-sleep">
+        <div class="block-head" onclick="toggleBlock('sleep')">
+          <div class="block-strip" style="background:var(--indigo)"></div>
+          <div class="block-info">
+            <div class="block-time">10:00 PM</div>
+            <div class="block-name">Sleep</div>
+          </div>
+          <div class="block-right">
+            <div class="block-badge" style="background:var(--indigo-dim);color:var(--indigo)" id="bp-sleep">0/2</div>
+            <div class="block-chevron open" id="chv-sleep">›</div>
+          </div>
+        </div>
+        <div class="block-body" id="bb-sleep">
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">In bed by 10 PM</div></div>
+          <div class="task" onclick="tap(this)"><div class="task-cb"></div><div class="task-label">No social media before sleep</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── MONTHLY PAGE ── -->
+  <div class="page" id="page-monthly">
+    <div style="margin-top:14px">
+      <div class="cal-nav-row">
+        <div class="cal-month-title" id="cal-title">June 2026</div>
+        <div class="cal-btns">
+          <button class="cal-btn" onclick="changeMonth(-1)">‹</button>
+          <button class="cal-btn" onclick="changeMonth(1)">›</button>
+        </div>
+      </div>
+
+      <div class="month-stats">
+        <div class="mstat"><div class="mstat-val" id="ms-full">0</div><div class="mstat-label">Full days</div></div>
+        <div class="mstat"><div class="mstat-val" id="ms-partial">0</div><div class="mstat-label">Partial</div></div>
+        <div class="mstat"><div class="mstat-val" id="ms-streak">0</div><div class="mstat-label">Streak 🔥</div></div>
+      </div>
+
+      <div class="day-labels">
+        <div class="dl">Su</div><div class="dl">Mo</div><div class="dl">Tu</div>
+        <div class="dl">We</div><div class="dl">Th</div><div class="dl">Fr</div><div class="dl">Sa</div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div class="cal-legend" style="margin-bottom:4px">
+        <div class="leg"><div class="leg-sq" style="background:var(--green)"></div>100%</div>
+        <div class="leg"><div class="leg-sq" style="background:rgba(16,185,129,0.2);border:0.5px solid var(--green)"></div>Partial</div>
+        <div class="leg"><div class="leg-sq" style="background:var(--s1);border:0.5px solid var(--border)"></div>Missed</div>
+      </div>
+
+      <div class="habits-title">Core habits</div>
+      <div id="habit-tracker"></div>
+    </div>
+  </div>
+
+  <!-- ── TARGETS PAGE ── -->
+  <div class="page" id="page-targets">
+    <div style="margin-top:14px">
+      <div class="metrics-2">
+        <div class="metric-card">
+          <div class="metric-label">DAY OF 180</div>
+          <div class="metric-big" id="t-daynum">1</div>
+          <div class="metric-sub">since Jun 13, 2026</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">DAYS LEFT</div>
+          <div class="metric-big" id="t-daysleft">179</div>
+          <div class="metric-sub">keep going</div>
+        </div>
+      </div>
+
+      <div class="s-label">Last 14 days</div>
+      <div class="streak-row" id="streak-row"></div>
+
+      <div class="tcard">
+        <div class="tcard-top">
+          <div class="tcard-name">💰 Income</div>
+          <div class="tcard-pct" style="color:var(--amber)" id="t-inc-pct">0%</div>
+        </div>
+        <div class="tcard-desc">Target ₹30k–50k/month · Stretch ₹75k–1L/month</div>
+        <div class="tbar-bg"><div class="tbar-fill" id="t-inc-bar" style="width:0%;background:linear-gradient(90deg,var(--amber),#f97316)"></div></div>
+        <div class="tinput-row">
+          <span class="tinput-label">This month (₹):</span>
+          <input type="number" class="tinput" id="t-inc" placeholder="0" oninput="saveTgt('income',this.value);updateTgtBar('inc',this.value,30000)">
+        </div>
+      </div>
+
+      <div class="tcard">
+        <div class="tcard-top">
+          <div class="tcard-name">🍽️ SmartPlatter</div>
+          <div class="tcard-pct" style="color:var(--accent)" id="t-sp-pct">0%</div>
+        </div>
+        <div class="tcard-desc">Paying customers · 1 → 5 → 10 → 50</div>
+        <div class="tbar-bg"><div class="tbar-fill" id="t-sp-bar" style="width:0%;background:linear-gradient(90deg,var(--accent),var(--amber))"></div></div>
+        <div class="tinput-row">
+          <span class="tinput-label">Customers now:</span>
+          <input type="number" class="tinput" id="t-sp" placeholder="0" oninput="saveTgt('customers',this.value);updateTgtBar('sp',this.value,10)">
+        </div>
+      </div>
+
+      <div class="tcard">
+        <div class="tcard-top">
+          <div class="tcard-name">🔐 BharatSec</div>
+          <div class="tcard-pct" style="color:var(--indigo)" id="t-bs-pct">0%</div>
+        </div>
+        <div class="tcard-desc">Courses · Pentesting clients · Online authority</div>
+        <div class="tbar-bg"><div class="tbar-fill" id="t-bs-bar" style="width:0%;background:linear-gradient(90deg,var(--indigo),var(--teal))"></div></div>
+        <div class="tinput-row">
+          <span class="tinput-label">Milestones (of 5):</span>
+          <input type="number" class="tinput" id="t-bs" placeholder="0" min="0" max="5" oninput="saveTgt('bharatsec',this.value);updateTgtBar('bs',this.value,5)">
+        </div>
+      </div>
+
+      <div class="tcard">
+        <div class="tcard-top">
+          <div class="tcard-name">💪 Body Weight</div>
+          <div class="tcard-pct" style="color:var(--green)" id="t-bw-pct">0%</div>
+        </div>
+        <div class="tcard-desc">64 kg → 70–75 kg lean & athletic</div>
+        <div class="tbar-bg"><div class="tbar-fill" id="t-bw-bar" style="width:0%;background:linear-gradient(90deg,var(--green),var(--teal))"></div></div>
+        <div class="tinput-row">
+          <span class="tinput-label">Weight (kg):</span>
+          <input type="number" class="tinput" id="t-bw" placeholder="64" oninput="saveTgt('weight',this.value);updateBW(this.value)">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── JOURNAL PAGE ── -->
+  <div class="page" id="page-journal">
+    <div style="margin-top:14px">
+      <div class="jcard">
+        <div class="jcard-head"><div class="jcard-title">✦ Wins today</div></div>
+        <div class="jcard-body">
+          <div class="jlabel">Even small ones count. Write 3.</div>
+          <textarea class="jfield" id="j-wins" rows="4" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
+        </div>
+      </div>
+      <div class="jcard">
+        <div class="jcard-head"><div class="jcard-title">💰 Revenue today</div></div>
+        <div class="jcard-body">
+          <input class="jfield" id="j-revenue" placeholder="₹ earned or leads generated"/>
+        </div>
+      </div>
+      <div class="jcard">
+        <div class="jcard-head"><div class="jcard-title">🧠 Mental check-in</div></div>
+        <div class="jcard-body">
+          <div class="jlabel">Be honest with yourself.</div>
+          <textarea class="jfield" id="j-mental" rows="3" placeholder="How is your mind today?"></textarea>
+        </div>
+      </div>
+      <div class="jcard">
+        <div class="jcard-head"><div class="jcard-title">🎯 Tomorrow's focus</div></div>
+        <div class="jcard-body">
+          <input class="jfield" id="j-tomorrow" placeholder="The #1 thing tomorrow..."/>
+        </div>
+      </div>
+
+      <button class="save-btn" onclick="saveJournal()">Save Journal Entry</button>
+      <div class="save-msg" id="save-msg">✓ Saved to Google Sheets</div>
+
+      <div class="sec-title" style="margin-top:24px">Past entries</div>
+      <div id="past-entries"></div>
+      <div style="height:20px"></div>
+    </div>
+  </div>
+
+  <!-- ── TAB BAR ── -->
+  <div class="tabbar">
+    <button class="tab-btn active" onclick="showPage('daily',this)">
+      <div class="tab-icon">☀️</div>
+      <div class="tab-label">Daily</div>
+    </button>
+    <button class="tab-btn" onclick="showPage('monthly',this)">
+      <div class="tab-icon">📅</div>
+      <div class="tab-label">Monthly</div>
+    </button>
+    <button class="tab-btn" onclick="showPage('targets',this)">
+      <div class="tab-icon">🎯</div>
+      <div class="tab-label">Targets</div>
+    </button>
+    <button class="tab-btn" onclick="showPage('journal',this)">
+      <div class="tab-icon">📓</div>
+      <div class="tab-label">Journal</div>
+    </button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════
+//  CONSTANTS & STATE
+// ══════════════════════════════════════════
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const START = new Date('2026-06-13');
+
+const WORKOUTS = {
+  0: ['Walking (30–45 min)','Full body stretching'],
+  1: ['Pushups','Incline Pushups','Diamond Pushups','Plank (60 sec)'],
+  2: ['Squats','Lunges','Calf Raises','Core exercises'],
+  3: ['Burpees','Mountain Climbers','Running / Jogging'],
+  4: ['Pushups','Incline Pushups','Diamond Pushups','Plank (60 sec)'],
+  5: ['Squats','Lunges','Calf Raises','Core exercises'],
+  6: ['Burpees','Mountain Climbers','Running / Jogging'],
+};
+const W_LABEL = {0:'🚶 Walk + Stretch',1:'💪 Push Day',2:'🦵 Legs Day',3:'🏃 Cardio Day',4:'💪 Push Day',5:'🦵 Legs Day',6:'🏃 Cardio Day'};
+
+const now = new Date();
+const TODAY = now.toISOString().split('T')[0];
+const DAY_IDX = now.getDay();
+
+let SCRIPT_URL = localStorage.getItem('mukesh_url') || '';
+let syncTimer = null;
+let calYear = now.getFullYear(), calMonth = now.getMonth();
+let monthData = {};
+
+// ══════════════════════════════════════════
+//  SETUP
+// ══════════════════════════════════════════
+if (SCRIPT_URL) {
+  bootApp();
+} else {
+  document.getElementById('setup-screen').style.display = 'flex';
+}
+
+async function connectSheet() {
+  const url = document.getElementById('script-url').value.trim();
+  const err = document.getElementById('setup-error');
+  const loading = document.getElementById('setup-loading');
+  const btn = document.getElementById('connect-btn');
+  err.style.display = 'none';
+  if (!url.includes('script.google.com') || !url.includes('/exec')) {
+    err.textContent = 'That doesn\'t look like a valid Apps Script URL. Make sure it ends with /exec'; err.style.display='block'; return;
+  }
+  btn.disabled = true; loading.style.display = 'block';
+  try {
+    const res = await api('ping', {}, url);
+    if (res.ok) {
+      localStorage.setItem('mukesh_url', url);
+      SCRIPT_URL = url;
+      loading.style.display = 'none';
+      bootApp();
+    } else {
+      throw new Error('Server responded but ping failed');
+    }
+  } catch(e) {
+    err.textContent = 'Could not connect. Check your URL and make sure you set "Anyone" access when deploying.';
+    err.style.display = 'block'; btn.disabled = false; loading.style.display = 'none';
+  }
+}
+
+function bootApp() {
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  initDaily();
+  buildTargetsUI();
+  buildJournalHistory();
+}
+
+// ══════════════════════════════════════════
+//  API
+// ══════════════════════════════════════════
+async function api(action, body = {}, url = SCRIPT_URL) {
+  const isGet = Object.keys(body).length === 0;
+  const params = new URLSearchParams({ action, ...(!isGet ? {} : body) });
+  const fetchUrl = url + '?' + params;
+  const opts = isGet
+    ? { method: 'GET' }
+    : { method: 'POST', body: JSON.stringify(body) };
+  const res = await fetch(fetchUrl, opts);
+  return res.json();
+}
+
+async function apiGet(action, params) {
+  const q = new URLSearchParams({ action, ...params });
+  const res = await fetch(SCRIPT_URL + '?' + q);
+  return res.json();
+}
+
+async function apiPost(action, body) {
+  const q = new URLSearchParams({ action });
+  const res = await fetch(SCRIPT_URL + '?' + q, { method: 'POST', body: JSON.stringify(body) });
+  return res.json();
+}
+
+function setSyncStatus(state, text) {
+  const el = document.getElementById('sync-status-daily');
+  const t = document.getElementById('sync-text-daily');
+  el.className = 'sync-status ' + state;
+  t.textContent = text;
+}
+
+// ══════════════════════════════════════════
+//  DAILY
+// ══════════════════════════════════════════
+function initDaily() {
+  // Date info
+  document.getElementById('topbar-date').textContent = now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('hero-day').textContent = DAYS[DAY_IDX];
+  document.getElementById('hero-workout').textContent = W_LABEL[DAY_IDX];
+
+  // Day counter
+  const dayNum = Math.max(1, Math.round((now - START)/(1000*60*60*24)) + 1);
+  document.getElementById('pill-day').textContent = 'Day ' + dayNum;
+  document.getElementById('pill-left').textContent = Math.max(0,180-dayNum) + ' days to go';
+
+  // Build workout tasks
+  const wEl = document.getElementById('bb-workout');
+  WORKOUTS[DAY_IDX].forEach(w => {
+    const d = document.createElement('div');
+    d.className = 'task';
+    d.onclick = function(){ tap(this); };
+    d.innerHTML = `<div class="task-cb"></div><div class="task-label">${w}</div>`;
+    wEl.appendChild(d);
+  });
+
+  // Load from local cache first (fast), then sync from server
+  const cached = getLocal('day-'+TODAY);
+  if (cached) applyDayData(cached);
+  updateProgress();
+  loadDayFromServer();
+
+  // Auto-save on text input
+  ['top1','top2','top3','wins-today','learn-topic'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => scheduleSave());
+  });
+}
+
+async function loadDayFromServer() {
+  setSyncStatus('syncing-s', 'Loading...');
+  try {
+    const data = await apiGet('getDay', { date: TODAY });
+    applyDayData(data);
+    setLocal('day-'+TODAY, data);
+    setSyncStatus('ok', 'Synced ✓');
+  } catch(e) {
+    setSyncStatus('err', 'Offline — local only');
+  }
+}
+
+function applyDayData(data) {
+  if (!data) return;
+  const tasks = data.tasks || {};
+  const allTasks = document.querySelectorAll('.task');
+  allTasks.forEach((t, i) => {
+    const cb = t.querySelector('.task-cb');
+    const lbl = t.querySelector('.task-label');
+    if (tasks[i]) { cb.classList.add('on'); lbl.classList.add('done'); }
+    else { cb.classList.remove('on'); lbl.classList.remove('done'); }
+  });
+  if (data.top1) document.getElementById('top1').value = data.top1;
+  if (data.top2) document.getElementById('top2').value = data.top2;
+  if (data.top3) document.getElementById('top3').value = data.top3;
+  if (data.learningTopic) document.getElementById('learn-topic').value = data.learningTopic;
+  if (data.wins) document.getElementById('wins-today').value = data.wins;
+  updateProgress();
+}
+
+function tap(row) {
+  const cb = row.querySelector('.task-cb');
+  const lbl = row.querySelector('.task-label');
+  cb.classList.toggle('on');
+  lbl.classList.toggle('done');
+  updateProgress();
+  scheduleSave();
+}
+
+function updateProgress() {
+  const all = document.querySelectorAll('.task');
+  const done = document.querySelectorAll('.task-cb.on');
+  const pct = all.length ? Math.round(done.length / all.length * 100) : 0;
+
+  document.getElementById('arc-pct').textContent = pct + '%';
+  document.getElementById('arc-done-lbl').textContent = done.length+'/'+all.length;
+  document.getElementById('hero-tasks').textContent = done.length+' of '+all.length+' tasks done';
+  document.getElementById('arc-fill').style.strokeDashoffset = 201.1 - (201.1 * pct / 100);
+
+  const dc = document.getElementById('day-complete');
+  dc.style.display = pct === 100 ? 'block' : 'none';
+
+  // Block badges
+  const blocks = [
+    {id:'dharma1', sel:'#bb-dharma1'},
+    {id:'workout', sel:'#bb-workout'},
+    {id:'money', sel:'#bb-money'},
+    {id:'lunch', sel:'#bb-lunch'},
+    {id:'sp', sel:'#bb-sp'},
+    {id:'walk', sel:'#bb-walk'},
+    {id:'bs', sel:'#bb-bs'},
+    {id:'fam', sel:'#bb-fam'},
+    {id:'learn', sel:'#bb-learn'},
+    {id:'night', sel:'#bb-night'},
+    {id:'sleep', sel:'#bb-sleep'},
+  ];
+  blocks.forEach(b => {
+    const body = document.querySelector(b.sel);
+    if (!body) return;
+    const t = body.querySelectorAll('.task-cb');
+    const d = body.querySelectorAll('.task-cb.on');
+    const badge = document.getElementById('bp-'+b.id);
+    if (badge) badge.textContent = d.length+'/'+t.length;
+    const blk = document.getElementById('blk-'+b.id);
+    if (blk) blk.classList.toggle('complete', d.length > 0 && d.length === t.length);
+  });
+}
+
+function toggleBlock(id) {
+  const body = document.getElementById('bb-'+id);
+  const chv = document.getElementById('chv-'+id);
+  const collapsed = body.classList.toggle('collapsed');
+  chv.classList.toggle('open', !collapsed);
+}
+
+function buildTaskState() {
+  const state = {};
+  document.querySelectorAll('.task').forEach((t,i) => {
+    state[i] = t.querySelector('.task-cb').classList.contains('on');
+  });
+  return state;
+}
+
+function scheduleSave() {
+  if (syncTimer) clearTimeout(syncTimer);
+  setSyncStatus('syncing-s', 'Saving...');
+  syncTimer = setTimeout(saveDay, 1200);
+}
+
+async function saveDay() {
+  const all = document.querySelectorAll('.task');
+  const done = document.querySelectorAll('.task-cb.on');
+  const pct = all.length ? Math.round(done.length/all.length*100) : 0;
+  const data = {
+    date: TODAY,
+    pct,
+    tasks: buildTaskState(),
+    top1: document.getElementById('top1').value,
+    top2: document.getElementById('top2').value,
+    top3: document.getElementById('top3').value,
+    learningTopic: document.getElementById('learn-topic').value,
+    wins: document.getElementById('wins-today').value,
+  };
+  setLocal('day-'+TODAY, data);
+  // Update history for monthly
+  const hist = getLocal('history') || {};
+  hist[TODAY] = pct;
+  setLocal('history', hist);
+  try {
+    await apiPost('saveDay', data);
+    setSyncStatus('ok', 'Saved ✓');
+  } catch(e) {
+    setSyncStatus('err', 'Saved locally');
+  }
+}
+
+async function syncAll() {
+  const btn = document.getElementById('sync-btn');
+  btn.classList.add('syncing');
+  await saveDay();
+  await loadMonthData();
+  btn.classList.remove('syncing');
+  showToast('Synced with Google Sheets ✓');
+}
+
+// ══════════════════════════════════════════
+//  MONTHLY
+// ══════════════════════════════════════════
+async function loadMonthData() {
+  try {
+    const data = await apiGet('getMonth', { year: calYear, month: calMonth+1 });
+    monthData = data;
+    const hist = getLocal('history') || {};
+    Object.keys(data).forEach(k => { hist[k] = data[k].pct; });
+    setLocal('history', hist);
+    buildCalendar();
+  } catch(e) {
+    const hist = getLocal('history') || {};
+    monthData = {};
+    Object.keys(hist).forEach(k => { monthData[k] = { pct: hist[k] }; });
+    buildCalendar();
+  }
+}
+
+function buildCalendar() {
+  const hist = getLocal('history') || {};
+  Object.keys(monthData).forEach(k => { hist[k] = monthData[k].pct || monthData[k]; });
+
+  document.getElementById('cal-title').textContent = MONTHS[calMonth] + ' ' + calYear;
+  const first = new Date(calYear, calMonth, 1).getDay();
+  const total = new Date(calYear, calMonth+1, 0).getDate();
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+
+  let fullDays = 0, partialDays = 0, streak = 0, curStreak = 0;
+
+  for (let i=0;i<first;i++) { const c=document.createElement('div'); c.className='cal-cell empty'; grid.appendChild(c); }
+  for (let d=1;d<=total;d++) {
+    const key = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = key === TODAY;
+    const isPast = new Date(calYear,calMonth,d) < now && !isToday;
+    const isFuture = new Date(calYear,calMonth,d) > now;
+    const pct = hist[key] || 0;
+    const c = document.createElement('div');
+    c.textContent = d;
+    if (isFuture) { c.className='cal-cell future'; }
+    else if (isToday) { c.className='cal-cell today'; }
+    else if (pct >= 100) { c.className='cal-cell full'; fullDays++; curStreak++; if(curStreak>streak)streak=curStreak; }
+    else if (pct > 0) { c.className='cal-cell partial'; partialDays++; curStreak=0; }
+    else { c.className='cal-cell'; curStreak=0; }
+    grid.appendChild(c);
+  }
+  document.getElementById('ms-full').textContent = fullDays;
+  document.getElementById('ms-partial').textContent = partialDays;
+  document.getElementById('ms-streak').textContent = streak;
+  buildHabitDots(hist, total);
+}
+
+function buildHabitDots(hist, daysInMonth) {
+  const habits = ['Morning Dharma','Workout','Money Block','SmartPlatter','Walk','BharatSec','Family','Learning','Sleep'];
+  const ht = document.getElementById('habit-tracker');
+  ht.innerHTML = '';
+  habits.forEach(h => {
+    let cnt = 0;
+    let dots = '';
+    for (let d=1;d<=daysInMonth;d++) {
+      const key = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const isToday = key === TODAY;
+      const pct = hist[key] || 0;
+      const on = pct >= 60;
+      if (on) cnt++;
+      dots += `<div class="h-dot ${isToday?'today-dot':on?'on':''}"></div>`;
+    }
+    const pct = Math.round(cnt/daysInMonth*100);
+    const row = document.createElement('div');
+    row.className = 'habit-row';
+    row.innerHTML = `<span class="habit-name">${h}</span><div class="habit-dots">${dots}</div><span class="habit-pct">${pct}%</span>`;
+    ht.appendChild(row);
+  });
+}
+
+function changeMonth(d) {
+  calMonth += d;
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  loadMonthData();
+}
+
+// ══════════════════════════════════════════
+//  TARGETS
+// ══════════════════════════════════════════
+async function buildTargetsUI() {
+  const dayNum = Math.max(1, Math.round((now-START)/(1000*60*60*24))+1);
+  document.getElementById('t-daynum').textContent = dayNum;
+  document.getElementById('t-daysleft').textContent = Math.max(0,180-dayNum);
+
+  // Streak (last 14 days)
+  const hist = getLocal('history') || {};
+  const row = document.getElementById('streak-row');
+  row.innerHTML = '';
+  for (let i=13;i>=0;i--) {
+    const d = new Date(now); d.setDate(d.getDate()-i);
+    const key = d.toISOString().split('T')[0];
+    const pct = hist[key] || 0;
+    const isT = i===0;
+    const sq = document.createElement('div');
+    sq.className = 's-sq'+(isT?' today-sq':pct>=100?' done':pct>0?' partial':'');
+    row.appendChild(sq);
+  }
+
+  // Load saved targets
+  try {
+    const data = await apiGet('getTargets', {});
+    if (data.income) { document.getElementById('t-inc').value=data.income; updateTgtBar('inc',data.income,30000); }
+    if (data.customers) { document.getElementById('t-sp').value=data.customers; updateTgtBar('sp',data.customers,10); }
+    if (data.bharatsec) { document.getElementById('t-bs').value=data.bharatsec; updateTgtBar('bs',data.bharatsec,5); }
+    if (data.weight) { document.getElementById('t-bw').value=data.weight; updateBW(data.weight); }
+  } catch(e) {
+    const local = getLocal('targets') || {};
+    if(local.income){document.getElementById('t-inc').value=local.income;updateTgtBar('inc',local.income,30000);}
+    if(local.customers){document.getElementById('t-sp').value=local.customers;updateTgtBar('sp',local.customers,10);}
+    if(local.bharatsec){document.getElementById('t-bs').value=local.bharatsec;updateTgtBar('bs',local.bharatsec,5);}
+    if(local.weight){document.getElementById('t-bw').value=local.weight;updateBW(local.weight);}
+  }
+}
+
+function updateTgtBar(id, val, max) {
+  const pct = Math.min(100, Math.round((parseFloat(val)||0)/max*100));
+  document.getElementById('t-'+id+'-pct').textContent = pct+'%';
+  document.getElementById('t-'+id+'-bar').style.width = pct+'%';
+}
+function updateBW(val) {
+  const v = parseFloat(val)||64;
+  const pct = Math.min(100,Math.max(0,Math.round((v-64)/(72-64)*100)));
+  document.getElementById('t-bw-pct').textContent = pct+'%';
+  document.getElementById('t-bw-bar').style.width = pct+'%';
+}
+
+let tgtTimer = null;
+function saveTgt(key, val) {
+  const local = getLocal('targets') || {};
+  local[key] = val; setLocal('targets', local);
+  if (tgtTimer) clearTimeout(tgtTimer);
+  tgtTimer = setTimeout(async () => {
+    try { await apiPost('saveTargets', { [key]: val }); showToast('Saved ✓'); }
+    catch(e) { showToast('Saved locally'); }
+  }, 1000);
+}
+
+// ══════════════════════════════════════════
+//  JOURNAL
+// ══════════════════════════════════════════
+async function saveJournal() {
+  const data = {
+    date: TODAY,
+    wins: document.getElementById('j-wins').value,
+    revenue: document.getElementById('j-revenue').value,
+    mental: document.getElementById('j-mental').value,
+    tomorrow: document.getElementById('j-tomorrow').value,
+  };
+  const entries = getLocal('journal') || [];
+  const idx = entries.findIndex(e=>e.date===TODAY);
+  if(idx>=0) entries[idx]=data; else entries.unshift(data);
+  setLocal('journal', entries);
+  try {
+    await apiPost('saveJournal', data);
+    const msg = document.getElementById('save-msg');
+    msg.style.display='block';
+    setTimeout(()=>msg.style.display='none', 2500);
+  } catch(e) {
+    showToast('Saved locally');
+  }
+  buildJournalHistory();
+}
+
+async function buildJournalHistory() {
+  let entries = [];
+  try {
+    entries = await apiGet('getRecentJournals', {});
+  } catch(e) {
+    entries = getLocal('journal') || [];
+  }
+  const el = document.getElementById('past-entries');
+  el.innerHTML = '';
+  entries.filter(e=>e.date!==TODAY).slice(0,10).forEach(e => {
+    const d = new Date(e.date);
+    const div = document.createElement('div');
+    div.className = 'past-entry';
+    div.innerHTML = `<div class="pe-date">${d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}</div><div class="pe-wins">${e.wins||'No wins recorded'}</div>`;
+    el.appendChild(div);
+  });
+}
+
+// ══════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(name==='monthly') loadMonthData();
+  if(name==='targets') buildTargetsUI();
+  if(name==='journal') buildJournalHistory();
+}
+
+// ══════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════
+function getLocal(k) { try { return JSON.parse(localStorage.getItem('m180_'+k)); } catch { return null; } }
+function setLocal(k,v) { try { localStorage.setItem('m180_'+k, JSON.stringify(v)); } catch {} }
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+</script>
+</body>
+</html>
