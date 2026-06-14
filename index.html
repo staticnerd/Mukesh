@@ -378,17 +378,28 @@ textarea.jf{resize:none;line-height:1.5;}
       </div>
 
       <div class="blk" id="b-wk" data-habit="Walk">
-        <div class="bhead" onclick="tog('wk')"><div class="bstrip" style="background:var(--tl)"></div><div class="binfo"><div class="btime">4:00 – 5:00 PM</div><div class="bname">Walk — No Phone</div></div><div class="bright"><div class="bbadge" style="background:rgba(45,212,191,.13);color:var(--tl)" id="bp-wk">0/1</div><span class="bchev open" id="bc-wk">›</span></div></div>
+        <div class="bhead" onclick="tog('wk')"><div class="bstrip" style="background:var(--tl)"></div><div class="binfo"><div class="btime">6:00 – 7:00 PM</div><div class="bname">Walk — No Phone</div></div><div class="bright"><div class="bbadge" style="background:rgba(45,212,191,.13);color:var(--tl)" id="bp-wk">0/1</div><span class="bchev open" id="bc-wk">›</span></div></div>
         <div class="bbody" id="bb-wk">
-          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">1 hour walk (sunlight, no phone)</div></div>
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">1 hour walk — evening breeze, no phone</div></div>
         </div>
       </div>
 
       <div class="blk" id="b-bs" data-habit="BharatSec">
-        <div class="bhead" onclick="tog('bs')"><div class="bstrip" style="background:var(--in)"></div><div class="binfo"><div class="btime">5:00 – 7:00 PM</div><div class="bname">BharatSec</div></div><div class="bright"><div class="bbadge" style="background:var(--in-d);color:var(--in)" id="bp-bs">0/2</div><span class="bchev open" id="bc-bs">›</span></div></div>
+        <div class="bhead" onclick="tog('bs')"><div class="bstrip" style="background:var(--in)"></div><div class="binfo"><div class="btime">4:00 – 6:00 PM</div><div class="bname">BharatSec — Academy & Planning</div></div><div class="bright"><div class="bbadge" style="background:var(--in-d);color:var(--in)" id="bp-bs">0/2</div><span class="bchev open" id="bc-bs">›</span></div></div>
         <div class="bbody" id="bb-bs">
-          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Course / awareness content created</div></div>
-          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Pentesting / training work done</div></div>
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">BharatSec Academy — lesson / module work</div></div>
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Pentesting / training material updated</div></div>
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Awareness / outreach post planned</div></div>
+          <div class="task" id="task-blog" onclick="tap(this)" style="display:none"><div class="tcb"></div><div class="tlbl">📝 Weekly Blog post published (BharatSec)</div></div>
+        </div>
+      </div>
+
+      <!-- VLOG block -->
+      <div class="blk" id="b-vlog" data-habit="BharatSec">
+        <div class="bhead" onclick="tog('vlog')"><div class="bstrip" style="background:#f87171"></div><div class="binfo"><div class="btime">7:00 PM</div><div class="bname">🎬 Daily Vlog Post</div></div><div class="bright"><div class="bbadge" style="background:rgba(248,113,113,0.15);color:#f87171" id="bp-vlog">0/2</div><span class="bchev open" id="bc-vlog">›</span></div></div>
+        <div class="bbody" id="bb-vlog">
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Vlog video edited and ready</div></div>
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Vlog posted on YouTube / Instagram</div></div>
         </div>
       </div>
 
@@ -408,7 +419,7 @@ textarea.jf{resize:none;line-height:1.5;}
       </div>
 
       <div class="blk" id="b-nd" data-habit="Dharma">
-        <div class="bhead" onclick="tog('nd')"><div class="bstrip" style="background:var(--in)"></div><div class="binfo"><div class="btime">9:00 – 9:30 PM</div><div class="bname">Ram Naam + Journal</div></div><div class="bright"><div class="bbadge" style="background:var(--in-d);color:var(--in)" id="bp-nd">0/2</div><span class="bchev open" id="bc-nd">›</span></div></div>
+        <div class="bhead" onclick="tog('nd')"><div class="bstrip" style="background:var(--in)"></div><div class="binfo"><div class="btime">9:00 – 10:00 PM</div><div class="bname">Ram Naam + Journal</div></div><div class="bright"><div class="bbadge" style="background:var(--in-d);color:var(--in)" id="bp-nd">0/2</div><span class="bchev open" id="bc-nd">›</span></div></div>
         <div class="bbody" id="bb-nd">
           <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Ram Naam done</div></div>
           <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Journal: 3 wins written</div></div>
@@ -417,9 +428,9 @@ textarea.jf{resize:none;line-height:1.5;}
       </div>
 
       <div class="blk" id="b-sl" data-habit="Sleep">
-        <div class="bhead" onclick="tog('sl')"><div class="bstrip" style="background:var(--in)"></div><div class="binfo"><div class="btime">10:00 PM</div><div class="bname">Sleep</div></div><div class="bright"><div class="bbadge" style="background:var(--in-d);color:var(--in)" id="bp-sl">0/2</div><span class="bchev open" id="bc-sl">›</span></div></div>
+        <div class="bhead" onclick="tog('sl')"><div class="bstrip" style="background:var(--in)"></div><div class="binfo"><div class="btime">10:30 PM</div><div class="bname">Sleep</div></div><div class="bright"><div class="bbadge" style="background:var(--in-d);color:var(--in)" id="bp-sl">0/2</div><span class="bchev open" id="bc-sl">›</span></div></div>
         <div class="bbody" id="bb-sl">
-          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">In bed by 10 PM</div></div>
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">In bed by 10:30 PM</div></div>
           <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">No social media before sleep</div></div>
         </div>
       </div>
@@ -579,8 +590,8 @@ const DI    = now.getDay();
 let URL = gl('url')||'', calY=now.getFullYear(), calM=now.getMonth(), saveTimer, tgtTimer;
 
 // BLOCK → HABIT mapping
-const BLKHABIT = {d1:'Dharma',wo:'Workout',puja:'Dharma',mo:'MoneyBlock',sp:'SmartPlatter',wk:'Walk',bs:'BharatSec',fm:'Family',lr:'Learning',nd:'Dharma',sl:'Sleep',lu:'Dharma'};
-const BLKLIST  = ['d1','wo','puja','mo','lu','sp','wk','bs','fm','lr','nd','sl'];
+const BLKHABIT = {d1:'Dharma',wo:'Workout',puja:'Dharma',mo:'MoneyBlock',sp:'SmartPlatter',wk:'Walk',bs:'BharatSec',vlog:'BharatSec',fm:'Family',lr:'Learning',bsnight:'BharatSec',fun:'Learning',nd:'Dharma',sl:'Sleep',lu:'Dharma'};
+const BLKLIST  = ['d1','wo','puja','mo','lu','sp','wk','bs','vlog','fm','lr','bsnight','fun','nd','sl'];
 
 if (URL) boot(); else document.getElementById('setup').style.display='flex';
 
@@ -651,7 +662,7 @@ function initDaily(){
     setSt('busy','Loading…');
     apig('getDay',{date:TODAY}).then(d=>{applyDay(d);sl('day-'+TODAY,d);setSt('ok','Synced ✓');}).catch(()=>setSt('local','Local only'));
   }
-  ['t1','t2','t3','wins','ltopic'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',schedSave);});
+  ['t1','t2','t3','wins','ltopic','fun-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',schedSave);});
 }
 
 function applyDay(d){
@@ -707,7 +718,7 @@ async function saveDay(){
   const all=document.querySelectorAll('.task'),done=document.querySelectorAll('.tcb.on');
   const pct=all.length?Math.round(done.length/all.length*100):0;
   const tasks={};all.forEach((r,i)=>tasks[i]=r.querySelector('.tcb').classList.contains('on'));
-  const data={date:TODAY,pct,tasks,habits:getHabits(),top1:document.getElementById('t1').value,top2:document.getElementById('t2').value,top3:document.getElementById('t3').value,topic:document.getElementById('ltopic').value,wins:document.getElementById('wins').value};
+  const data={date:TODAY,pct,tasks,habits:getHabits(),top1:document.getElementById('t1').value,top2:document.getElementById('t2').value,top3:document.getElementById('t3').value,topic:document.getElementById('ltopic').value,wins:document.getElementById('wins').value,funnote:(document.getElementById('fun-note')?document.getElementById('fun-note').value:'')};
   sl('day-'+TODAY,data);
   const h=gl('hist')||{}; h[TODAY]={pct,habits:getHabits()}; sl('hist',h);
   if(URL==='local'){setSt('local','Saved locally');return;}
