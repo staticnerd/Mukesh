@@ -287,7 +287,10 @@ textarea.jf{resize:none;line-height:1.5;}
   <div class="topbar">
     <div class="tbi">
       <div><div class="tb-title">⚡ Operation Mukesh 180</div><div class="tb-date" id="tbdate"></div></div>
-      <div class="spill local" id="spill" onclick="manualSync()"><div class="sdot" id="sdot"></div><span id="stxt">Local</span></div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div class="spill local" id="spill" onclick="manualSync()"><div class="sdot" id="sdot"></div><span id="stxt">Local</span></div>
+        <div onclick="showSettings()" style="width:32px;height:32px;border-radius:50%;background:var(--s2);border:.5px solid var(--b);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;-webkit-tap-highlight-color:transparent;">⚙️</div>
+      </div>
     </div>
   </div>
 
@@ -320,12 +323,14 @@ textarea.jf{resize:none;line-height:1.5;}
 
       <!-- BLOCKS — each has data-habit attr for per-habit tracking -->
       <div class="blk" id="b-d1" data-habit="Dharma">
-        <div class="bhead" onclick="tog('d1')"><div class="bstrip" style="background:var(--in)"></div><div class="binfo"><div class="btime">5:30 – 6:00 AM</div><div class="bname">Morning Dharma</div></div><div class="bright"><div class="bbadge" style="background:var(--in-d);color:var(--in)" id="bp-d1">0/4</div><span class="bchev open" id="bc-d1">›</span></div></div>
+        <div class="bhead" onclick="tog('d1')"><div class="bstrip" style="background:var(--in)"></div><div class="binfo"><div class="btime">4:30 – 5:30 AM</div><div class="bname">Morning Dharma</div></div><div class="bright"><div class="bbadge" style="background:var(--in-d);color:var(--in)" id="bp-d1">0/4</div><span class="bchev open" id="bc-d1">›</span></div></div>
         <div class="bbody" id="bb-d1">
-          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Wake up at 5:30 AM</div></div>
-          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">No Instagram / Facebook / messages</div></div>
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Wake up at 4:30 AM</div></div>
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">No Instagram / Facebook / messages on wake</div></div>
           <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Water + Bath</div></div>
           <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">108 Ram Naam or Hanuman Chalisa</div></div>
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Meditation — 10 min (focus on breath)</div></div>
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Set intention for the day</div></div>
         </div>
       </div>
 
@@ -507,6 +512,44 @@ textarea.jf{resize:none;line-height:1.5;}
     <button class="tbtn" onclick="nav('journal',this)"><div class="tico">📓</div><div class="tlbl">Journal</div></button>
   </div>
 </div>
+
+  <!-- SETTINGS MODAL -->
+  <div id="settings-modal" style="display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:24px 16px;overflow-y:auto;">
+    <div style="max-width:440px;margin:0 auto;background:var(--s1);border:.5px solid var(--b2);border-radius:22px;overflow:hidden;margin-top:env(safe-area-inset-top,44px);">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:.5px solid var(--b);">
+        <div style="font-size:16px;font-weight:700;">⚙️ Settings</div>
+        <div onclick="hideSettings()" style="font-size:22px;color:var(--mt);cursor:pointer;padding:0 4px;">×</div>
+      </div>
+
+      <!-- Connection status -->
+      <div style="padding:16px 18px;border-bottom:.5px solid var(--b);">
+        <div style="font-size:11px;font-weight:700;color:var(--mt);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;">Google Sheets</div>
+        <div id="set-status" style="font-size:13px;color:var(--mt);margin-bottom:12px;"></div>
+        <div style="font-size:12px;color:var(--mt);margin-bottom:7px;">Paste new Web App URL to connect or reconnect:</div>
+        <input id="set-url" type="url" placeholder="https://script.google.com/macros/s/.../exec"
+          style="width:100%;background:var(--s2);border:.5px solid var(--b2);border-radius:10px;padding:11px 13px;font-size:13px;color:var(--tx);font-family:inherit;outline:none;margin-bottom:10px;"
+          autocomplete="off" autocorrect="off" spellcheck="false"/>
+        <button onclick="reconnect()" style="width:100%;padding:12px;border-radius:12px;background:linear-gradient(135deg,var(--or),var(--or2));border:none;color:#fff;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;margin-bottom:8px;">Connect to Google Sheets</button>
+        <button onclick="useLocal()" style="width:100%;padding:12px;border-radius:12px;background:var(--s2);border:.5px solid var(--b);color:var(--mt);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;">Use locally (no Google Sheets)</button>
+        <div id="set-err" style="color:var(--rd);font-size:12px;margin-top:8px;display:none;line-height:1.5;"></div>
+        <div id="set-ok" style="color:var(--gn);font-size:13px;font-weight:600;margin-top:8px;display:none;">✓ Connected successfully!</div>
+      </div>
+
+      <!-- Data export -->
+      <div style="padding:16px 18px;border-bottom:.5px solid var(--b);">
+        <div style="font-size:11px;font-weight:700;color:var(--mt);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;">Data Backup</div>
+        <button onclick="exportData()" style="width:100%;padding:12px;border-radius:12px;background:var(--s2);border:.5px solid var(--b);color:var(--tx);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer;margin-bottom:8px;">📥 Export all data as JSON</button>
+        <div style="font-size:11px;color:var(--ht);line-height:1.5;">Downloads a backup file of all your local data. Save it to iCloud or Google Drive.</div>
+      </div>
+
+      <!-- About -->
+      <div style="padding:16px 18px;">
+        <div style="font-size:11px;font-weight:700;color:var(--mt);letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px;">About</div>
+        <div style="font-size:13px;color:var(--mt);line-height:1.6;">⚡ Operation Mukesh 180<br>Day 1 starts: June 14, 2026<br>Built with Claude AI</div>
+      </div>
+    </div>
+  </div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -863,6 +906,60 @@ function gl(k){try{return JSON.parse(localStorage.getItem('m180_'+k));}catch{ret
 function sl(k,v){try{localStorage.setItem('m180_'+k,JSON.stringify(v));}catch{}}
 let tt;
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');if(tt)clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('show'),2200);}
+
+// ── SETTINGS ──
+function showSettings(){
+  const modal=document.getElementById('settings-modal');
+  modal.style.display='block';
+  const status=document.getElementById('set-status');
+  const urlInput=document.getElementById('set-url');
+  if(URL==='local'||!URL){
+    status.textContent='Status: Running locally — data saved on this device only.';
+  } else {
+    status.innerHTML='Status: <span style="color:var(--gn);font-weight:600;">Connected to Google Sheets ✓</span><br><span style="font-size:11px;word-break:break-all;color:var(--ht)">'+URL+'</span>';
+    urlInput.value=URL;
+  }
+}
+function hideSettings(){ document.getElementById('settings-modal').style.display='none'; }
+
+async function reconnect(){
+  const u=document.getElementById('set-url').value.trim();
+  const err=document.getElementById('set-err'), ok=document.getElementById('set-ok');
+  err.style.display='none'; ok.style.display='none';
+  if(!u.includes('script.google.com')||!u.includes('/exec')){
+    err.textContent='URL must be from script.google.com and end with /exec';
+    err.style.display='block'; return;
+  }
+  try{
+    const r=await jget(u,{action:'ping'});
+    if(r&&r.ok){
+      sl('url',u); URL=u;
+      setSt('ok','Synced ✓');
+      ok.style.display='block';
+      setTimeout(()=>{hideSettings();manualSync();},1200);
+    } else throw new Error();
+  }catch(e){
+    err.innerHTML='Could not connect. Make sure:<br>1. Script created from <strong>Extensions → Apps Script</strong> inside Google Sheets<br>2. Deployed as Web App with access: <strong>Anyone</strong><br>3. You clicked Authorize during deployment';
+    err.style.display='block';
+  }
+}
+
+function useLocal(){
+  URL='local'; sl('url','local');
+  setSt('local','Local only');
+  hideSettings();
+  toast('Running locally — data saved on device');
+}
+
+function exportData(){
+  const data={url:URL,history:gl('hist'),targets:gl('tgts'),journal:gl('jnl'),exportedAt:new Date().toISOString()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='mukesh180_backup_'+TODAY+'.json';
+  a.click();
+  toast('Backup downloaded ✓');
+}
 </script>
 </body>
 </html>
