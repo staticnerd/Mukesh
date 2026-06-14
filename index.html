@@ -937,64 +937,76 @@ if (SCRIPT_URL) {
   document.getElementById('setup-screen').style.display = 'flex';
 }
 
+// JSONP helper — works from local files & Safari (no CORS issues)
+function jsonp(url, params) {
+  return new Promise((resolve, reject) => {
+    const cbName = '_cb' + Date.now() + Math.floor(Math.random()*9999);
+    const timeout = setTimeout(() => {
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+      reject(new Error('timeout'));
+    }, 12000);
+    window[cbName] = function(data) {
+      clearTimeout(timeout);
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+      resolve(data);
+    };
+    const q = new URLSearchParams({ ...params, callback: cbName });
+    const script = document.createElement('script');
+    script.src = url + '?' + q;
+    script.onerror = () => { clearTimeout(timeout); delete window[cbName]; reject(new Error('script error')); };
+    document.head.appendChild(script);
+  });
+}
+
+async function apiGet(action, params = {}) {
+  try {
+    return await jsonp(SCRIPT_URL, { action, ...params });
+  } catch(e) {
+    // Fallback: try fetch with no-cors mode for writes, JSONP for reads
+    throw e;
+  }
+}
+
+async function apiPost(action, body = {}) {
+  // Encode body as URL params so JSONP GET can carry it
+  return await jsonp(SCRIPT_URL, { action, data: JSON.stringify(body) });
+}
+
+async function api(action, body = {}, url = SCRIPT_URL) {
+  return await jsonp(url, { action, ...body });
+}
+
 async function connectSheet() {
   const url = document.getElementById('script-url').value.trim();
   const err = document.getElementById('setup-error');
   const loading = document.getElementById('setup-loading');
   const btn = document.getElementById('connect-btn');
   err.style.display = 'none';
-  if (!url.includes('script.google.com') || !url.includes('/exec')) {
-    err.textContent = 'That doesn\'t look like a valid Apps Script URL. Make sure it ends with /exec'; err.style.display='block'; return;
+  if (!url || !url.includes('script.google.com')) {
+    err.textContent = 'Please paste your Web App URL — it should start with https://script.google.com';
+    err.style.display = 'block'; return;
+  }
+  if (!url.includes('/exec')) {
+    err.textContent = 'URL must end with /exec — copy it again from the Deploy screen.';
+    err.style.display = 'block'; return;
   }
   btn.disabled = true; loading.style.display = 'block';
   try {
-    const res = await api('ping', {}, url);
-    if (res.ok) {
+    const res = await jsonp(url, { action: 'ping' });
+    if (res && res.ok) {
       localStorage.setItem('mukesh_url', url);
       SCRIPT_URL = url;
       loading.style.display = 'none';
       bootApp();
     } else {
-      throw new Error('Server responded but ping failed');
+      throw new Error('ping failed');
     }
   } catch(e) {
-    err.textContent = 'Could not connect. Check your URL and make sure you set "Anyone" access when deploying.';
+    err.textContent = 'Could not connect. Double-check: (1) URL ends with /exec, (2) "Who has access" is set to Anyone, (3) you clicked Authorize when deploying.';
     err.style.display = 'block'; btn.disabled = false; loading.style.display = 'none';
   }
-}
-
-function bootApp() {
-  document.getElementById('setup-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  initDaily();
-  buildTargetsUI();
-  buildJournalHistory();
-}
-
-// ══════════════════════════════════════════
-//  API
-// ══════════════════════════════════════════
-async function api(action, body = {}, url = SCRIPT_URL) {
-  const isGet = Object.keys(body).length === 0;
-  const params = new URLSearchParams({ action, ...(!isGet ? {} : body) });
-  const fetchUrl = url + '?' + params;
-  const opts = isGet
-    ? { method: 'GET' }
-    : { method: 'POST', body: JSON.stringify(body) };
-  const res = await fetch(fetchUrl, opts);
-  return res.json();
-}
-
-async function apiGet(action, params) {
-  const q = new URLSearchParams({ action, ...params });
-  const res = await fetch(SCRIPT_URL + '?' + q);
-  return res.json();
-}
-
-async function apiPost(action, body) {
-  const q = new URLSearchParams({ action });
-  const res = await fetch(SCRIPT_URL + '?' + q, { method: 'POST', body: JSON.stringify(body) });
-  return res.json();
 }
 
 function setSyncStatus(state, text) {
