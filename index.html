@@ -125,10 +125,10 @@ html,body{background:var(--bg);color:var(--tx);font-family:'Space Grotesk',-appl
 .task:last-of-type{border-bottom:none;}
 .task:active{background:var(--s2);}
 .tcb{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--ht);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s cubic-bezier(.34,1.56,.64,1);}
-.tcb.on{background:var(--gn);border-color:var(--gn);transform:scale(1.08);}
+.tcb.on{background:var(--gn);border-color:var(--gn);transform:scale(1.08);box-shadow:0 0 0 3px rgba(16,185,129,0.2);}
 .tcb.on::after{content:'✓';color:#fff;font-size:13px;font-weight:700;}
 .tlbl{font-size:13px;line-height:1.4;flex:1;transition:color .2s;}
-.tlbl.done{color:var(--ht);text-decoration:line-through;}
+.tlbl.done{color:var(--ht);text-decoration:line-through;opacity:0.6;}
 
 /* BLOCK INPUT */
 .binp{padding:11px 13px;border-top:.5px solid var(--b);}
@@ -297,6 +297,7 @@ textarea.jf{resize:none;line-height:1.5;}
   <!-- DAILY -->
   <div class="page on" id="pg-daily">
     <div style="margin-top:12px">
+
       <div class="hero">
         <div class="arc">
           <svg width="78" height="78" viewBox="0 0 78 78">
@@ -312,18 +313,12 @@ textarea.jf{resize:none;line-height:1.5;}
           <div class="day-done" id="ddone">✦ Day Complete!</div>
         </div>
       </div>
+
       <div class="dpill"><div class="dpn" id="dpn">Day 1</div><div class="dps"></div><div class="dpl" id="dpl">179 days to go</div></div>
 
-      <div class="top3">
-        <div class="t3lbl">Today's Top 3</div>
-        <div class="t3row"><div class="t3n">1</div><input class="t3f" id="t1" placeholder="Most important task…"/></div>
-        <div class="t3row"><div class="t3n">2</div><input class="t3f" id="t2" placeholder="Second priority…"/></div>
-        <div class="t3row"><div class="t3n">3</div><input class="t3f" id="t3" placeholder="Third priority…"/></div>
-      </div>
-
-      <!-- BLOCKS — each has data-habit attr for per-habit tracking -->
+      <!-- 4:30 Morning Dharma -->
       <div class="blk" id="b-d1" data-habit="Dharma">
-        <div class="bhead" onclick="tog('d1')"><div class="bstrip" style="background:var(--in)"></div><div class="binfo"><div class="btime">4:30 – 5:30 AM</div><div class="bname">Morning Dharma</div></div><div class="bright"><div class="bbadge" style="background:var(--in-d);color:var(--in)" id="bp-d1">0/4</div><span class="bchev open" id="bc-d1">›</span></div></div>
+        <div class="bhead" onclick="tog('d1')"><div class="bstrip" style="background:var(--in)"></div><div class="binfo"><div class="btime">4:30 – 5:30 AM</div><div class="bname">Morning Dharma & Meditation</div></div><div class="bright"><div class="bbadge" style="background:var(--in-d);color:var(--in)" id="bp-d1">0/6</div><span class="bchev open" id="bc-d1">›</span></div></div>
         <div class="bbody" id="bb-d1">
           <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Wake up at 4:30 AM</div></div>
           <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">No Instagram / Facebook / messages on wake</div></div>
@@ -334,12 +329,13 @@ textarea.jf{resize:none;line-height:1.5;}
         </div>
       </div>
 
+      <!-- 5:30 Workout -->
       <div class="blk" id="b-wo" data-habit="Workout">
         <div class="bhead" onclick="tog('wo')"><div class="bstrip" style="background:var(--gn)"></div><div class="binfo"><div class="btime">5:30 – 6:30 AM</div><div class="bname">Workout</div></div><div class="bright"><div class="bbadge" style="background:var(--gn-d);color:var(--gn)" id="bp-wo">0/4</div><span class="bchev open" id="bc-wo">›</span></div></div>
         <div class="bbody" id="bb-wo"></div>
       </div>
 
-      <!-- PUJA BLOCK — shown only on Tue & Sat via JS -->
+      <!-- 6:30 Puja — Tue & Sat only -->
       <div class="blk" id="b-puja" data-habit="Dharma" style="display:none">
         <div class="bhead" onclick="tog('puja')"><div class="bstrip" style="background:#c084fc"></div><div class="binfo"><div class="btime">6:30 – 8:00 AM</div><div class="bname">🪔 Dedicated Puja Time</div></div><div class="bright"><div class="bbadge" style="background:rgba(192,132,252,0.15);color:#c084fc" id="bp-puja">0/4</div><span class="bchev open" id="bc-puja">›</span></div></div>
         <div class="bbody" id="bb-puja">
@@ -350,6 +346,7 @@ textarea.jf{resize:none;line-height:1.5;}
         </div>
       </div>
 
+      <!-- 8:00 Money Block -->
       <div class="blk" id="b-mo" data-habit="MoneyBlock">
         <div class="bhead" onclick="tog('mo')"><div class="bstrip" style="background:var(--am)"></div><div class="binfo"><div class="btime">8:00 AM – 12:00 PM</div><div class="bname">Money Block — StaticNerd</div></div><div class="bright"><div class="bbadge" style="background:var(--am-d);color:var(--am)" id="bp-mo">0/4</div><span class="bchev open" id="bc-mo">›</span></div></div>
         <div class="bbody" id="bb-mo">
@@ -360,6 +357,7 @@ textarea.jf{resize:none;line-height:1.5;}
         </div>
       </div>
 
+      <!-- 12:00 Lunch -->
       <div class="blk" id="b-lu" data-habit="Dharma">
         <div class="bhead" onclick="tog('lu')"><div class="bstrip" style="background:var(--in)"></div><div class="binfo"><div class="btime">12:00 – 1:00 PM</div><div class="bname">Lunch + Ram Naam</div></div><div class="bright"><div class="bbadge" style="background:var(--in-d);color:var(--in)" id="bp-lu">0/2</div><span class="bchev open" id="bc-lu">›</span></div></div>
         <div class="bbody" id="bb-lu">
@@ -368,6 +366,7 @@ textarea.jf{resize:none;line-height:1.5;}
         </div>
       </div>
 
+      <!-- 1:00 SmartPlatter -->
       <div class="blk" id="b-sp" data-habit="SmartPlatter">
         <div class="bhead" onclick="tog('sp')"><div class="bstrip" style="background:var(--or)"></div><div class="binfo"><div class="btime">1:00 – 4:00 PM</div><div class="bname">SmartPlatter</div></div><div class="bright"><div class="bbadge" style="background:var(--or-d);color:var(--or)" id="bp-sp">0/3</div><span class="bchev open" id="bc-sp">›</span></div></div>
         <div class="bbody" id="bb-sp">
@@ -377,15 +376,9 @@ textarea.jf{resize:none;line-height:1.5;}
         </div>
       </div>
 
-      <div class="blk" id="b-wk" data-habit="Walk">
-        <div class="bhead" onclick="tog('wk')"><div class="bstrip" style="background:var(--tl)"></div><div class="binfo"><div class="btime">6:00 – 7:00 PM</div><div class="bname">Walk — No Phone</div></div><div class="bright"><div class="bbadge" style="background:rgba(45,212,191,.13);color:var(--tl)" id="bp-wk">0/1</div><span class="bchev open" id="bc-wk">›</span></div></div>
-        <div class="bbody" id="bb-wk">
-          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">1 hour walk — evening breeze, no phone</div></div>
-        </div>
-      </div>
-
+      <!-- 4:00 BharatSec Academy & Planning -->
       <div class="blk" id="b-bs" data-habit="BharatSec">
-        <div class="bhead" onclick="tog('bs')"><div class="bstrip" style="background:var(--in)"></div><div class="binfo"><div class="btime">4:00 – 6:00 PM</div><div class="bname">BharatSec — Academy & Planning</div></div><div class="bright"><div class="bbadge" style="background:var(--in-d);color:var(--in)" id="bp-bs">0/2</div><span class="bchev open" id="bc-bs">›</span></div></div>
+        <div class="bhead" onclick="tog('bs')"><div class="bstrip" style="background:var(--in)"></div><div class="binfo"><div class="btime">4:00 – 6:00 PM</div><div class="bname">BharatSec — Academy & Planning</div></div><div class="bright"><div class="bbadge" style="background:var(--in-d);color:var(--in)" id="bp-bs">0/3</div><span class="bchev open" id="bc-bs">›</span></div></div>
         <div class="bbody" id="bb-bs">
           <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">BharatSec Academy — lesson / module work</div></div>
           <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Pentesting / training material updated</div></div>
@@ -394,7 +387,15 @@ textarea.jf{resize:none;line-height:1.5;}
         </div>
       </div>
 
-      <!-- VLOG block -->
+      <!-- 6:00 Walk -->
+      <div class="blk" id="b-wk" data-habit="Walk">
+        <div class="bhead" onclick="tog('wk')"><div class="bstrip" style="background:var(--tl)"></div><div class="binfo"><div class="btime">6:00 – 7:00 PM</div><div class="bname">Walk — No Phone</div></div><div class="bright"><div class="bbadge" style="background:rgba(45,212,191,.13);color:var(--tl)" id="bp-wk">0/1</div><span class="bchev open" id="bc-wk">›</span></div></div>
+        <div class="bbody" id="bb-wk">
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">1 hour walk — evening breeze, no phone</div></div>
+        </div>
+      </div>
+
+      <!-- 7:00 Vlog -->
       <div class="blk" id="b-vlog" data-habit="BharatSec">
         <div class="bhead" onclick="tog('vlog')"><div class="bstrip" style="background:#f87171"></div><div class="binfo"><div class="btime">7:00 PM</div><div class="bname">🎬 Daily Vlog Post</div></div><div class="bright"><div class="bbadge" style="background:rgba(248,113,113,0.15);color:#f87171" id="bp-vlog">0/2</div><span class="bchev open" id="bc-vlog">›</span></div></div>
         <div class="bbody" id="bb-vlog">
@@ -403,6 +404,7 @@ textarea.jf{resize:none;line-height:1.5;}
         </div>
       </div>
 
+      <!-- 7:00 Family -->
       <div class="blk" id="b-fm" data-habit="Family">
         <div class="bhead" onclick="tog('fm')"><div class="bstrip" style="background:var(--pk)"></div><div class="binfo"><div class="btime">7:00 – 8:00 PM</div><div class="bname">Family Time</div></div><div class="bright"><div class="bbadge" style="background:var(--pk-d);color:var(--pk)" id="bp-fm">0/1</div><span class="bchev open" id="bc-fm">›</span></div></div>
         <div class="bbody" id="bb-fm">
@@ -410,16 +412,37 @@ textarea.jf{resize:none;line-height:1.5;}
         </div>
       </div>
 
+      <!-- 8:00 Learning -->
       <div class="blk" id="b-lr" data-habit="Learning">
         <div class="bhead" onclick="tog('lr')"><div class="bstrip" style="background:var(--or)"></div><div class="binfo"><div class="btime">8:00 – 9:00 PM</div><div class="bname">Learning Block</div></div><div class="bright"><div class="bbadge" style="background:var(--or-d);color:var(--or)" id="bp-lr">0/1</div><span class="bchev open" id="bc-lr">›</span></div></div>
         <div class="bbody" id="bb-lr">
           <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">1 hour focused learning done</div></div>
-          <div class="binp"><div class="bilbl">Topic (Sales / SaaS / Pentesting / Business)</div><input class="bif" id="ltopic" placeholder="e.g. SaaS growth strategies"/></div>
         </div>
       </div>
 
+      <!-- 9:00 BharatSec Deep Work (Silence) -->
+      <div class="blk" id="b-bsnight" data-habit="BharatSec">
+        <div class="bhead" onclick="tog('bsnight')"><div class="bstrip" style="background:var(--in)"></div><div class="binfo"><div class="btime">9:00 – 10:00 PM</div><div class="bname">🔐 BharatSec Deep Work</div></div><div class="bright"><div class="bbadge" style="background:var(--in-d);color:var(--in)" id="bp-bsnight">0/2</div><span class="bchev open" id="bc-bsnight">›</span></div></div>
+        <div class="bbody" id="bb-bsnight">
+          <div style="font-size:11px;color:var(--in);padding:7px 13px 4px;font-weight:600;">🤫 Silence time — course / content creation</div>
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Course content / video created (min 30 min)</div></div>
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Pentesting research / script written</div></div>
+        </div>
+      </div>
+
+      <!-- 10:00 Creative / Book Writing -->
+      <div class="blk" id="b-fun" data-habit="Learning">
+        <div class="bhead" onclick="tog('fun')"><div class="bstrip" style="background:#a78bfa"></div><div class="binfo"><div class="btime">10:00 – 10:15 PM</div><div class="bname">✨ Book Writing / Creative</div></div><div class="bright"><div class="bbadge" style="background:rgba(167,139,250,0.15);color:#a78bfa" id="bp-fun">0/1</div><span class="bchev open" id="bc-fun">›</span></div></div>
+        <div class="bbody" id="bb-fun">
+          <div style="font-size:11px;color:#a78bfa;padding:7px 13px 4px;font-weight:600;">Your soul project — write even 15 minutes</div>
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Book writing / creative work done</div></div>
+          <div class="binp"><div class="bilbl">What did you write / create today?</div><input class="bif" id="fun-note" placeholder="e.g. wrote 200 words of chapter 3…"/></div>
+        </div>
+      </div>
+
+      <!-- 10:15 Ram Naam + Journal -->
       <div class="blk" id="b-nd" data-habit="Dharma">
-        <div class="bhead" onclick="tog('nd')"><div class="bstrip" style="background:var(--in)"></div><div class="binfo"><div class="btime">9:00 – 10:00 PM</div><div class="bname">Ram Naam + Journal</div></div><div class="bright"><div class="bbadge" style="background:var(--in-d);color:var(--in)" id="bp-nd">0/2</div><span class="bchev open" id="bc-nd">›</span></div></div>
+        <div class="bhead" onclick="tog('nd')"><div class="bstrip" style="background:var(--in)"></div><div class="binfo"><div class="btime">10:15 – 10:30 PM</div><div class="bname">Ram Naam + Journal</div></div><div class="bright"><div class="bbadge" style="background:var(--in-d);color:var(--in)" id="bp-nd">0/2</div><span class="bchev open" id="bc-nd">›</span></div></div>
         <div class="bbody" id="bb-nd">
           <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Ram Naam done</div></div>
           <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Journal: 3 wins written</div></div>
@@ -427,6 +450,7 @@ textarea.jf{resize:none;line-height:1.5;}
         </div>
       </div>
 
+      <!-- 10:30 Sleep -->
       <div class="blk" id="b-sl" data-habit="Sleep">
         <div class="bhead" onclick="tog('sl')"><div class="bstrip" style="background:var(--in)"></div><div class="binfo"><div class="btime">10:30 PM</div><div class="bname">Sleep</div></div><div class="bright"><div class="bbadge" style="background:var(--in-d);color:var(--in)" id="bp-sl">0/2</div><span class="bchev open" id="bc-sl">›</span></div></div>
         <div class="bbody" id="bb-sl">
@@ -434,10 +458,10 @@ textarea.jf{resize:none;line-height:1.5;}
           <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">No social media before sleep</div></div>
         </div>
       </div>
+
     </div>
   </div>
 
-  <!-- MONTHLY -->
   <div class="page" id="pg-monthly">
     <div style="margin-top:12px">
       <div class="cal-nav">
@@ -590,8 +614,8 @@ const DI    = now.getDay();
 let URL = gl('url')||'', calY=now.getFullYear(), calM=now.getMonth(), saveTimer, tgtTimer;
 
 // BLOCK → HABIT mapping
-const BLKHABIT = {d1:'Dharma',wo:'Workout',puja:'Dharma',mo:'MoneyBlock',sp:'SmartPlatter',wk:'Walk',bs:'BharatSec',vlog:'BharatSec',fm:'Family',lr:'Learning',bsnight:'BharatSec',fun:'Learning',nd:'Dharma',sl:'Sleep',lu:'Dharma'};
-const BLKLIST  = ['d1','wo','puja','mo','lu','sp','wk','bs','vlog','fm','lr','bsnight','fun','nd','sl'];
+const BLKHABIT = {d1:'Dharma',wo:'Workout',puja:'Dharma',mo:'MoneyBlock',lu:'Dharma',sp:'SmartPlatter',bs:'BharatSec',wk:'Walk',vlog:'BharatSec',fm:'Family',lr:'Learning',bsnight:'BharatSec',fun:'Learning',nd:'Dharma',sl:'Sleep'};
+const BLKLIST  = ['d1','wo','puja','mo','lu','sp','bs','wk','vlog','fm','lr','bsnight','fun','nd','sl'];
 
 if (URL) boot(); else document.getElementById('setup').style.display='flex';
 
@@ -660,9 +684,17 @@ function initDaily(){
 
   if(URL&&URL!=='local'){
     setSt('busy','Loading…');
-    apig('getDay',{date:TODAY}).then(d=>{applyDay(d);sl('day-'+TODAY,d);setSt('ok','Synced ✓');}).catch(()=>setSt('local','Local only'));
+    apig('getDay',{date:TODAY}).then(d=>{
+      // Only apply if server has actual data (pct > 0 or has tasks)
+      const hasData = d && (d.pct > 0 || Object.values(d.tasks||{}).some(v=>v));
+      if(hasData){
+        applyDay(d);
+        sl('day-'+TODAY,d);
+      }
+      setSt('ok','Synced ✓');
+    }).catch(()=>setSt('local','Local only'));
   }
-  ['t1','t2','t3','wins','ltopic','fun-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',schedSave);});
+  ['wins','fun-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',schedSave);});
 }
 
 function applyDay(d){
@@ -672,15 +704,20 @@ function applyDay(d){
     const cb=r.querySelector('.tcb'),lb=r.querySelector('.tlbl');
     if(tasks[i]){cb.classList.add('on');lb.classList.add('done');}else{cb.classList.remove('on');lb.classList.remove('done');}
   });
-  if(d.top1) document.getElementById('t1').value=d.top1;
-  if(d.top2) document.getElementById('t2').value=d.top2;
-  if(d.top3) document.getElementById('t3').value=d.top3;
-  if(d.topic) document.getElementById('ltopic').value=d.topic;
-  if(d.wins)  document.getElementById('wins').value=d.wins;
+  const wEl=document.getElementById('wins'); if(wEl&&d.wins) wEl.value=d.wins;
+  const fEl=document.getElementById('fun-note'); if(fEl&&d.funnote) fEl.value=d.funnote;
   updateProg();
 }
 
-function tap(row){row.querySelector('.tcb').classList.toggle('on');row.querySelector('.tlbl').classList.toggle('done');updateProg();schedSave();}
+function tap(row){
+  const cb=row.querySelector('.tcb'), lb=row.querySelector('.tlbl');
+  const wasOn=cb.classList.contains('on');
+  cb.classList.toggle('on'); lb.classList.toggle('done');
+  // Brief flash to confirm action
+  row.style.background=wasOn?'rgba(239,68,68,0.08)':'rgba(16,185,129,0.08)';
+  setTimeout(()=>row.style.background='',400);
+  updateProg(); schedSave();
+}
 
 function getHabits(){
   // Compute per-habit completion based on block tasks
@@ -718,7 +755,9 @@ async function saveDay(){
   const all=document.querySelectorAll('.task'),done=document.querySelectorAll('.tcb.on');
   const pct=all.length?Math.round(done.length/all.length*100):0;
   const tasks={};all.forEach((r,i)=>tasks[i]=r.querySelector('.tcb').classList.contains('on'));
-  const data={date:TODAY,pct,tasks,habits:getHabits(),top1:document.getElementById('t1').value,top2:document.getElementById('t2').value,top3:document.getElementById('t3').value,topic:document.getElementById('ltopic').value,wins:document.getElementById('wins').value,funnote:(document.getElementById('fun-note')?document.getElementById('fun-note').value:'')};
+  const winsEl=document.getElementById('wins');
+  const funEl=document.getElementById('fun-note');
+  const data={date:TODAY,pct,tasks,habits:getHabits(),wins:winsEl?winsEl.value:'',funnote:funEl?funEl.value:''};
   sl('day-'+TODAY,data);
   const h=gl('hist')||{}; h[TODAY]={pct,habits:getHabits()}; sl('hist',h);
   if(URL==='local'){setSt('local','Saved locally');return;}
