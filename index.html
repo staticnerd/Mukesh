@@ -335,8 +335,19 @@ textarea.jf{resize:none;line-height:1.5;}
       </div>
 
       <div class="blk" id="b-wo" data-habit="Workout">
-        <div class="bhead" onclick="tog('wo')"><div class="bstrip" style="background:var(--gn)"></div><div class="binfo"><div class="btime">6:00 – 7:00 AM</div><div class="bname">Workout</div></div><div class="bright"><div class="bbadge" style="background:var(--gn-d);color:var(--gn)" id="bp-wo">0/4</div><span class="bchev open" id="bc-wo">›</span></div></div>
+        <div class="bhead" onclick="tog('wo')"><div class="bstrip" style="background:var(--gn)"></div><div class="binfo"><div class="btime">5:30 – 6:30 AM</div><div class="bname">Workout</div></div><div class="bright"><div class="bbadge" style="background:var(--gn-d);color:var(--gn)" id="bp-wo">0/4</div><span class="bchev open" id="bc-wo">›</span></div></div>
         <div class="bbody" id="bb-wo"></div>
+      </div>
+
+      <!-- PUJA BLOCK — shown only on Tue & Sat via JS -->
+      <div class="blk" id="b-puja" data-habit="Dharma" style="display:none">
+        <div class="bhead" onclick="tog('puja')"><div class="bstrip" style="background:#c084fc"></div><div class="binfo"><div class="btime">6:30 – 8:00 AM</div><div class="bname">🪔 Dedicated Puja Time</div></div><div class="bright"><div class="bbadge" style="background:rgba(192,132,252,0.15);color:#c084fc" id="bp-puja">0/4</div><span class="bchev open" id="bc-puja">›</span></div></div>
+        <div class="bbody" id="bb-puja">
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Clean puja space</div></div>
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Light diya and incense</div></div>
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Hanuman Chalisa / Ram Naam full recitation</div></div>
+          <div class="task" onclick="tap(this)"><div class="tcb"></div><div class="tlbl">Dedicated prayer / offering done</div></div>
+        </div>
       </div>
 
       <div class="blk" id="b-mo" data-habit="MoneyBlock">
@@ -556,7 +567,7 @@ textarea.jf{resize:none;line-height:1.5;}
 const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const DSHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const START  = new Date('2026-06-14');
+const START  = new Date('2026-06-14'); // Change this date if you restart
 const HABITS = ['Dharma','Workout','MoneyBlock','SmartPlatter','Walk','BharatSec','Family','Learning','Sleep'];
 const HNAMES = {Dharma:'Morning Dharma',Workout:'Workout',MoneyBlock:'Money Block',SmartPlatter:'SmartPlatter',Walk:'Walk',BharatSec:'BharatSec',Family:'Family Time',Learning:'Learning',Sleep:'Sleep'};
 const WO = {0:['Walking (30–45 min)','Full body stretching'],1:['Pushups','Incline Pushups','Diamond Pushups','Plank (60 sec)'],2:['Squats','Lunges','Calf Raises','Core exercises'],3:['Burpees','Mountain Climbers','Running'],4:['Pushups','Incline Pushups','Diamond Pushups','Plank (60 sec)'],5:['Squats','Lunges','Calf Raises','Core exercises'],6:['Burpees','Mountain Climbers','Running']};
@@ -568,8 +579,8 @@ const DI    = now.getDay();
 let URL = gl('url')||'', calY=now.getFullYear(), calM=now.getMonth(), saveTimer, tgtTimer;
 
 // BLOCK → HABIT mapping
-const BLKHABIT = {d1:'Dharma',wo:'Workout',mo:'MoneyBlock',sp:'SmartPlatter',wk:'Walk',bs:'BharatSec',fm:'Family',lr:'Learning',nd:'Dharma',sl:'Sleep',lu:'Dharma'};
-const BLKLIST  = ['d1','wo','mo','lu','sp','wk','bs','fm','lr','nd','sl'];
+const BLKHABIT = {d1:'Dharma',wo:'Workout',puja:'Dharma',mo:'MoneyBlock',sp:'SmartPlatter',wk:'Walk',bs:'BharatSec',fm:'Family',lr:'Learning',nd:'Dharma',sl:'Sleep',lu:'Dharma'};
+const BLKLIST  = ['d1','wo','puja','mo','lu','sp','wk','bs','fm','lr','nd','sl'];
 
 if (URL) boot(); else document.getElementById('setup').style.display='flex';
 
@@ -621,8 +632,12 @@ function setSt(s,t){ const p=document.getElementById('spill'),d=document.getElem
 function initDaily(){
   document.getElementById('tbdate').textContent=now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long'});
   document.getElementById('hday').textContent=DAYS[DI];
-  document.getElementById('hwo').textContent=WL[DI];
-  const dn=Math.max(1,Math.round((now-START)/864e5)+1);
+  document.getElementById('hwo').textContent=WL[DI]+(DI===2||DI===6?' + 🪔 Puja':'');
+  // Adjust money block time on puja days
+  if(DI===2||DI===6){
+    document.querySelector('#b-mo .btime').textContent='8:00 AM – 12:00 PM';
+  }
+  const dn=Math.max(1,Math.floor((new Date(now.getFullYear(),now.getMonth(),now.getDate())-new Date(START.getFullYear(),START.getMonth(),START.getDate()))/864e5)+1);
   document.getElementById('dpn').textContent='Day '+dn;
   document.getElementById('dpl').textContent=Math.max(0,180-dn)+' days to go';
 
@@ -851,7 +866,7 @@ function renderInsights(d,days){
 
 // ── TARGETS ──
 async function loadTargets(){
-  const dn=Math.max(1,Math.round((now-START)/864e5)+1);
+  const dn=Math.max(1,Math.floor((new Date(now.getFullYear(),now.getMonth(),now.getDate())-new Date(START.getFullYear(),START.getMonth(),START.getDate()))/864e5)+1);
   document.getElementById('tdn').textContent=dn;
   document.getElementById('tdl').textContent=Math.max(0,180-dn);
   buildStreak();
